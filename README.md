@@ -9,26 +9,25 @@
 ## INTRODUCTION
 
 The Analyze AI Sentiment module provides AI-powered text analysis capabilities
-for Drupal 10 content, measuring various aspects like trust, objectivity,
+for Drupal content, measuring various aspects like trust, objectivity,
 audience targeting, and reading levels.
 
 The primary use case for this module is to:
 
 - **Analyze** content using AI processing
 - **Score** text content across multiple dimensions:
-  - Overall Sentiment (from Negative to Positive)
-  - Engagement Level (from Passive to Interactive)
   - Trust & Credibility (from Promotional to Authoritative)
-  - Objectivity (from Subjective to Objective)
-  - Technical Complexity (from Basic to Complex)
+  - Objectivity & Bias (from Opinion-Based to Fact-Based)
+  - Audience Vibe Check (from Gen Z to Boomer)
+  - CEFR Reading Level (from A1 Beginner to C2 Proficient)
 - **Guide** content creators with instant AI feedback
 
 Goals:
 
 - A comprehensive AI text analysis solution for Drupal content
 - A stable, maintainable API for AI-powered content evaluation
-- A pluggable architecture for different AI providers
 - Integration with the Analyze framework for consistent reporting
+- Standardized measurements for content evaluation
 
 ## REQUIREMENTS
 
@@ -101,50 +100,35 @@ changes into the main branch.
 ## CONFIGURATION
 
 ### Basic Setup
-- Configure global sentiment analysis settings at
-`/admin/config/analyze/sentiment`
-- Configure AI provider settings at `/admin/config/analyze/ai`
+- Configure AI provider settings at `/admin/config/ai/providers`
+- Configure and order sentiments at `/admin/config/analyze/sentiment`
+- Enable/disable the analyzer per content type at `/admin/config/content/analyze-settings`
 
 ### Content Type Configuration
-You can enable/disable and configure sentiments per content type:
+You can configure sentiment analysis per content type in two ways:
 
-1. Through the content type edit form:
-   - Go to `/admin/structure/types/manage/[content-type]`
-   - Click on the "Analyze" tab
-   - Find the "Sentiment Analysis" section
-   - Enable/disable specific sentiment metrics
+1. Through the content type settings:
+   - Go to `/admin/structure/types/manage/{content-type}`
+   - Find the "Sentiment Analysis" vertical tab
+   - Enable/disable specific sentiments for this content type
 
-2. Through individual content:
-   - View any content piece
-   - Look for the Analyze tab or section
-   - Find the "Sentiment Analysis" settings
-   - Enable/disable specific sentiment metrics
-
-The settings can be configured globally at `/admin/config/analyze/sentiment`
-and then enabled/disabled per content type or piece of content.
+2. Through the analyze settings:
+   - Go to `/admin/config/content/analyze-settings`
+   - Find the "AI Sentiment Analysis" section
+   - Enable/disable the analyzer for specific content types
 
 ### Analysis Metrics
-The module comes with several predefined analysis metrics that can be managed
-at `/admin/config/analyze/sentiment`:
+The module evaluates content across four key dimensions:
 
-- **Overall Sentiment**: Evaluate content from Negative to Positive
-- **Engagement Level**: Measure interaction from Passive to Interactive
-- **Trust & Credibility**: Evaluate content from Promotional to Authoritative
-- **Objectivity**: Measure content from Subjective to Objective
-- **Technical Complexity**: Assess from Basic to Complex
-
-Each metric:
-- Can be enabled/disabled per content type
-- Has customizable labels for minimum, middle, and maximum values
-- Can be reordered using drag-and-drop
-- Returns scores between -1.0 and +1.0
-- Can be added or removed through the UI
+- Trust & Credibility: Measures how authoritative vs promotional the content appears
+- Objectivity & Bias: Evaluates the balance between opinion and fact-based content
+- Audience Vibe Check: Identifies the generational targeting of the content
+- CEFR Reading Level: Assesses the content's language proficiency requirements
 
 ### Display
-- Results are shown as gauges with the configured labels
-- Scores are normalized to show clear progression from minimum to maximum values
-- The first enabled metric is used for summary displays
-- Detailed view shows all enabled metrics
+- Results are shown as gauges with clear progression
+- Each dimension shows relevant min/mid/max labels
+- Simple visual indicators for quick content assessment
 
 ## MAINTAINERS
 
