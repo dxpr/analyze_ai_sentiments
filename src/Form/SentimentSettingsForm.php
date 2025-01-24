@@ -2,6 +2,7 @@
 
 namespace Drupal\analyze_ai_sentiment\Form;
 
+use Drupal\Core\Url;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -110,12 +111,12 @@ class SentimentSettingsForm extends ConfigFormBase {
       ],
     ];
 
-    // Sort sentiments by weight
+    // Sort sentiments by weight.
     uasort($sentiments, function ($a, $b) {
       return ($a['weight'] ?? 0) <=> ($b['weight'] ?? 0);
     });
 
-    // Add existing sentiments to the table
+    // Add existing sentiments to the table.
     foreach ($sentiments as $id => $sentiment) {
       $form['table']['sentiments'][$id] = [
         '#attributes' => [
@@ -162,7 +163,7 @@ class SentimentSettingsForm extends ConfigFormBase {
           '#links' => [
             'delete' => [
               'title' => $this->t('Delete'),
-              'url' => \Drupal\Core\Url::fromRoute('analyze_ai_sentiment.delete_sentiment', ['sentiment_id' => $id]),
+              'url' => Url::fromRoute('analyze_ai_sentiment.delete_sentiment', ['sentiment_id' => $id]),
               'attributes' => [
                 'class' => ['button', 'button--danger', 'button--small'],
               ],
@@ -172,7 +173,7 @@ class SentimentSettingsForm extends ConfigFormBase {
       ];
     }
 
-    // Help text for drag-and-drop
+    // Help text for drag-and-drop.
     if (!empty($sentiments)) {
       $form['table_help'] = [
         '#type' => 'html_tag',
@@ -184,8 +185,8 @@ class SentimentSettingsForm extends ConfigFormBase {
     }
 
     $form = parent::buildForm($form, $form_state);
-    
-    // Improve the save button
+
+    // Improve the save button.
     $form['actions']['submit']['#value'] = $this->t('Save changes');
     $form['actions']['submit']['#attributes']['class'][] = 'button--primary';
 
@@ -214,4 +215,4 @@ class SentimentSettingsForm extends ConfigFormBase {
     parent::submitForm($form, $form_state);
   }
 
-} 
+}

@@ -134,14 +134,14 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
   protected function getConfiguredSentiments(): array {
     $config = $this->configFactory->get('analyze_ai_sentiment.settings');
     $sentiments = $config->get('sentiments');
-    
+
     if (empty($sentiments)) {
-      // Load defaults from the settings form
+      // Load defaults from the settings form.
       $form = \Drupal::classResolver()
         ->getInstanceFromDefinition('\Drupal\analyze_ai_sentiment\Form\SentimentSettingsForm');
       return $form->getDefaultSentiments();
     }
-    
+
     return $sentiments;
   }
 
@@ -169,27 +169,27 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
       return [];
     }
 
-    // Get settings from plugin_settings config
+    // Get settings from plugin_settings config.
     $plugin_settings_config = $this->getConfigFactory()->get('analyze.plugin_settings');
     $key = sprintf('%s.%s.%s', $entity_type_id, $bundle, $this->getPluginId());
     $settings = $plugin_settings_config->get($key) ?? [];
-    
-    // Get all available sentiments
+
+    // Get all available sentiments.
     $sentiments = $this->getConfiguredSentiments();
-    
+
     $enabled = [];
     foreach ($sentiments as $id => $sentiment) {
-      // If no settings exist yet, enable all sentiments by default
+      // If no settings exist yet, enable all sentiments by default.
       if (!isset($settings['sentiments'])) {
         $enabled[$id] = $sentiment;
       }
-      // Otherwise check if explicitly enabled in settings
+      // Otherwise check if explicitly enabled in settings.
       elseif (isset($settings['sentiments'][$id]) && $settings['sentiments'][$id]) {
         $enabled[$id] = $sentiment;
       }
     }
 
-    // Sort enabled sentiments by weight
+    // Sort enabled sentiments by weight.
     uasort($enabled, function ($a, $b) {
       return ($a['weight'] ?? 0) <=> ($b['weight'] ?? 0);
     });
@@ -207,7 +207,7 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
    *   The render array for the status table.
    */
   private function createStatusTable(string $message): array {
-    // If this is the AI provider message and user has permission, append the settings link
+    // If this is the AI provider message and user has permission, append the settings link.
     if ($message === 'No chat AI provider is configured for sentiment analysis.' && $this->currentUser->hasPermission('administer analyze settings')) {
       $link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form');
       $message = $this->t('No chat AI provider is configured for sentiment analysis. @link', ['@link' => $link->toString()]);
@@ -233,7 +233,7 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
     $status = $status_config->get('status') ?? [];
     $entity_type = $entity->getEntityTypeId();
     $bundle = $entity->bundle();
-    
+
     if (!isset($status[$entity_type][$bundle][$this->getPluginId()])) {
       return $this->createStatusTable('Sentiment analysis is not enabled for this content type.');
     }
@@ -244,15 +244,15 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
     }
 
     $scores = $this->analyzeSentiment($entity);
-    
-    // For summary, we'll just show the first enabled sentiment gauge if available
+
+    // For summary, we'll just show the first enabled sentiment gauge if available.
     $sentiment = reset($enabled_sentiments);
     $id = key($enabled_sentiments);
-    
+
     if (isset($scores[$id])) {
-      // Convert -1 to +1 range to 0 to 1 for gauge
+      // Convert -1 to +1 range to 0 to 1 for gauge.
       $gauge_value = ($scores[$id] + 1) / 2;
-      
+
       return [
         '#theme' => 'analyze_gauge',
         '#caption' => $this->t('@label', ['@label' => $sentiment['label']]),
@@ -265,12 +265,12 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
         '#display_value' => sprintf('%+.1f', $scores[$id]),
       ];
     }
-    
-    // If no scores available but everything is configured correctly, show a helpful message
+
+    // If no scores available but everything is configured correctly, show a helpful message.
     if (!empty($content = $this->getHtml($entity))) {
       return $this->createStatusTable('No chat AI provider is configured for sentiment analysis.');
     }
-    
+
     return $this->createStatusTable('No content available for analysis.');
   }
 
@@ -282,7 +282,7 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
     $status = $status_config->get('status') ?? [];
     $entity_type = $entity->getEntityTypeId();
     $bundle = $entity->bundle();
-    
+
     if (!isset($status[$entity_type][$bundle][$this->getPluginId()])) {
       return $this->createStatusTable('Sentiment analysis is not enabled for this content type.');
     }
@@ -293,18 +293,18 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
     }
 
     $scores = $this->analyzeSentiment($entity);
-    
-    // If no scores available but content exists, show the table message
+
+    // If no scores available but content exists, show the table message.
     if (empty($scores) && !empty($this->getHtml($entity))) {
       return $this->createStatusTable('No chat AI provider is configured for sentiment analysis.');
     }
-    
-    // If no content available, show that message
+
+    // If no content available, show that message.
     if (empty($this->getHtml($entity))) {
       return $this->createStatusTable('No content available for analysis.');
     }
 
-    // Only build the gauge display if we have scores
+    // Only build the gauge display if we have scores.
     $build = [
       '#type' => 'container',
       '#attributes' => [
@@ -320,9 +320,9 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
 
     foreach ($enabled_sentiments as $id => $sentiment) {
       if (isset($scores[$id])) {
-        // Convert -1 to +1 range to 0 to 1 for gauge
+        // Convert -1 to +1 range to 0 to 1 for gauge.
         $gauge_value = ($scores[$id] + 1) / 2;
-        
+
         $build[$id] = [
           '#theme' => 'analyze_gauge',
           '#caption' => $this->t('@label', ['@label' => $sentiment['label']]),
@@ -336,7 +336,7 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
         ];
       }
     }
-    
+
     return $build;
   }
 
@@ -350,25 +350,25 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
    *   A HTML string of rendered content.
    */
   private function getHtml(EntityInterface $entity): string {
-    // Get the current active langcode from the site
+    // Get the current active langcode from the site.
     $langcode = $this->languageManager->getCurrentLanguage()->getId();
 
-    // Get the rendered entity view in default mode
+    // Get the rendered entity view in default mode.
     $view = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId())->view($entity, 'default', $langcode);
     $rendered = $this->renderer->render($view);
 
-    // Convert to string and strip HTML for sentiment analysis
+    // Convert to string and strip HTML for sentiment analysis.
     $content = is_object($rendered) && method_exists($rendered, '__toString')
       ? $rendered->__toString()
       : (string) $rendered;
-      
-    // Clean up the content for sentiment analysis
+
+    // Clean up the content for sentiment analysis.
     $content = strip_tags($content);
     $content = str_replace('&nbsp;', ' ', $content);
-    // Replace multiple whitespace characters (spaces, tabs, newlines) with a single space
+    // Replace multiple whitespace characters (spaces, tabs, newlines) with a single space.
     $content = preg_replace('/\s+/', ' ', $content);
     $content = trim($content);
-    
+
     return $content;
   }
 
@@ -383,25 +383,25 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
    */
   protected function analyzeSentiment(EntityInterface $entity): array {
     try {
-      // Get the content to analyze
+      // Get the content to analyze.
       $content = $this->getHtml($entity);
 
-      // Get the AI provider
+      // Get the AI provider.
       $ai_provider = $this->getAiProvider();
       if (!$ai_provider) {
         return [];
       }
 
-      // Get the default model
+      // Get the default model.
       $defaults = $this->getDefaultModel();
       if (!$defaults) {
         return [];
       }
 
-      // Build the prompt
+      // Build the prompt.
       $enabled_sentiments = $this->getEnabledSentiments($entity->getEntityTypeId(), $entity->bundle());
-      
-      // Build sentiment descriptions with their ranges
+
+      // Build sentiment descriptions with their ranges.
       $sentiment_descriptions = [];
       foreach ($enabled_sentiments as $id => $sentiment) {
         $sentiment_descriptions[] = sprintf(
@@ -412,16 +412,16 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
           $sentiment['mid_label']
         );
       }
-      
-      // Build dynamic JSON structure based on enabled sentiments
-      $json_keys = array_map(function($id, $sentiment) {
+
+      // Build dynamic JSON structure based on enabled sentiments.
+      $json_keys = array_map(function ($id, $sentiment) {
         return '"' . $id . '": number';
       }, array_keys($enabled_sentiments), $enabled_sentiments);
-      
+
       $json_template = '{' . implode(', ', $json_keys) . '}';
 
       $metrics = implode("\n", $sentiment_descriptions);
-      
+
       $prompt = <<<EOT
 <task>Analyze the following text.</task>
 <text>
@@ -436,34 +436,34 @@ $metrics
 <output_format>Respond with a simple JSON object containing only the required scores:
 $json_template</output_format>
 EOT;
-      
+
       $chat_array = [
         new ChatMessage('user', $prompt),
       ];
 
-      // Get response
+      // Get response.
       $messages = new ChatInput($chat_array);
       $message = $ai_provider->chat($messages, $defaults['model_id'])->getNormalized();
       $raw_response = $message->getText();
-      
-      // Use the injected PromptJsonDecoder service
+
+      // Use the injected PromptJsonDecoder service.
       $decoded = $this->promptJsonDecoder->decode($message);
-      
-      // If we couldn't decode the JSON at all
+
+      // If we couldn't decode the JSON at all.
       if (!is_array($decoded)) {
         return [];
       }
-      
-      // Validate and normalize scores to ensure they're within -1 to +1 range
+
+      // Validate and normalize scores to ensure they're within -1 to +1 range.
       $scores = [];
       foreach ($enabled_sentiments as $id => $sentiment) {
         if (isset($decoded[$id])) {
           $score = (float) $decoded[$id];
-          // Clamp score to -1 to +1 range
+          // Clamp score to -1 to +1 range.
           $scores[$id] = max(-1.0, min(1.0, $score));
         }
       }
-      
+
       return $scores;
 
     }
@@ -498,8 +498,8 @@ EOT;
    */
   public function extraSummaryLinks(EntityInterface $entity): array {
     $links = [];
-    
-    // Add settings link if user has permission
+
+    // Add settings link if user has permission.
     if ($this->currentUser->hasPermission('administer analyze settings')) {
       $links[] = [
         '#type' => 'link',
@@ -508,7 +508,7 @@ EOT;
         '#attributes' => ['class' => ['analyze-settings-link']],
       ];
     }
-    
+
     return $links;
   }
 
@@ -534,13 +534,13 @@ EOT;
     $config = \Drupal::configFactory()->getEditable('analyze.settings');
     $current = $config->get('status') ?? [];
 
-    // Save enabled state
+    // Save enabled state.
     if (isset($settings['enabled'])) {
       $current[$entity_type_id][$bundle][$this->getPluginId()] = $settings['enabled'];
       $config->set('status', $current)->save();
     }
 
-    // Save sentiment settings if present
+    // Save sentiment settings if present.
     if (isset($settings['sentiments'])) {
       $detailed_config = \Drupal::configFactory()->getEditable('analyze.plugin_settings');
       $key = sprintf('%s.%s.%s', $entity_type_id, $bundle, $this->getPluginId());
@@ -557,11 +557,11 @@ EOT;
   public function getDefaultSettings(): array {
     $sentiments = $this->getConfiguredSentiments();
     $default_sentiments = [];
-    
+
     foreach ($sentiments as $id => $sentiment) {
       $default_sentiments[$id] = TRUE;
     }
-    
+
     return [
       'enabled' => TRUE,
       'settings' => [
@@ -570,10 +570,13 @@ EOT;
     ];
   }
 
+  /**
+   *
+   */
   public function getConfigurableSettings(): array {
     $sentiments = $this->getConfiguredSentiments();
     $settings = [];
-    
+
     foreach ($sentiments as $id => $sentiment) {
       $settings[$id] = [
         'type' => 'checkbox',
@@ -581,7 +584,7 @@ EOT;
         'default_value' => TRUE,
       ];
     }
-    
+
     return [
       'sentiments' => [
         'type' => 'fieldset',
@@ -592,27 +595,33 @@ EOT;
     ];
   }
 
+  /**
+   *
+   */
   private function getAiProvider() {
-    // Check if we have any chat providers available
+    // Check if we have any chat providers available.
     if (!$this->aiProvider->hasProvidersForOperationType('chat', TRUE)) {
       return NULL;
     }
 
-    // Get the default provider for chat
+    // Get the default provider for chat.
     $defaults = $this->getDefaultModel();
     if (empty($defaults['provider_id'])) {
       return NULL;
     }
 
-    // Initialize AI provider
+    // Initialize AI provider.
     $ai_provider = $this->aiProvider->createInstance($defaults['provider_id']);
-    
-    // Configure provider with low temperature for more consistent results
+
+    // Configure provider with low temperature for more consistent results.
     $ai_provider->setConfiguration(['temperature' => 0.2]);
-    
+
     return $ai_provider;
   }
 
+  /**
+   *
+   */
   private function getDefaultModel() {
     $defaults = $this->aiProvider->getDefaultProviderForOperationType('chat');
     if (empty($defaults['provider_id']) || empty($defaults['model_id'])) {
@@ -621,4 +630,4 @@ EOT;
     return $defaults;
   }
 
-} 
+}

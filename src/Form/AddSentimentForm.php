@@ -2,6 +2,7 @@
 
 namespace Drupal\analyze_ai_sentiment\Form;
 
+use Drupal\Core\Url;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -140,7 +141,7 @@ class AddSentimentForm extends FormBase {
     $form['actions']['cancel'] = [
       '#type' => 'link',
       '#title' => $this->t('Cancel'),
-      '#url' => \Drupal\Core\Url::fromRoute('analyze_ai_sentiment.settings'),
+      '#url' => Url::fromRoute('analyze_ai_sentiment.settings'),
       '#attributes' => [
         'class' => ['button', 'dialog-cancel'],
         'role' => 'button',
@@ -156,13 +157,13 @@ class AddSentimentForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->configFactory->getEditable('analyze_ai_sentiment.settings');
     $sentiments = $config->get('sentiments') ?: [];
-    
-    // Get the maximum weight and add 1
+
+    // Get the maximum weight and add 1.
     $max_weight = 0;
     foreach ($sentiments as $sentiment) {
       $max_weight = max($max_weight, $sentiment['weight'] ?? 0);
     }
-    
+
     $values = $form_state->getValues();
     $sentiments[$values['id']] = [
       'id' => $values['id'],
@@ -172,10 +173,10 @@ class AddSentimentForm extends FormBase {
       'max_label' => $values['max_label'],
       'weight' => $max_weight + 1,
     ];
-    
+
     $config->set('sentiments', $sentiments)->save();
     $this->messenger()->addStatus($this->t('Added new sentiment %label.', ['%label' => $values['label']]));
-    $form_state->setRedirectUrl(\Drupal\Core\Url::fromRoute('analyze_ai_sentiment.settings'));
+    $form_state->setRedirectUrl(Url::fromRoute('analyze_ai_sentiment.settings'));
   }
 
-} 
+}

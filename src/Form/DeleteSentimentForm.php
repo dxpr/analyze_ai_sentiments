@@ -59,10 +59,10 @@ class DeleteSentimentForm extends ConfirmFormBase {
   public function buildForm(array $form, FormStateInterface $form_state, $sentiment_id = NULL) {
     $this->sentimentId = $sentiment_id;
     $form = parent::buildForm($form, $form_state);
-    
-    // Add warning class to confirm button
+
+    // Add warning class to confirm button.
     $form['actions']['submit']['#attributes']['class'][] = 'button--danger';
-    
+
     return $form;
   }
 
@@ -126,4 +126,4 @@ class DeleteSentimentForm extends ConfirmFormBase {
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
 
-} 
+}
