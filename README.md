@@ -8,7 +8,9 @@
 
 ## INTRODUCTION
 
-The Analyze AI Sentiment module provides AI-powered text analysis capabilities for Drupal 10 content, measuring various aspects like trust, objectivity, audience targeting, and reading levels.
+The Analyze AI Sentiment module provides AI-powered text analysis capabilities
+for Drupal 10 content, measuring various aspects like trust, objectivity,
+audience targeting, and reading levels.
 
 The primary use case for this module is to:
 
@@ -60,8 +62,8 @@ To run the Drupal linter:
 docker compose run --rm drupal-lint
 ```
 
-This command checks your Drupal code for adherence to coding standards and best
-practices.
+This command checks your Drupal code for adherence to coding standards and
+best practices.
 
 #### Running Drupal Deprecation and Analysis Checks
 
@@ -87,17 +89,20 @@ your Drupal code.
 
 #### Environment Variables
 
-The `DRUPAL_RECOMMENDED_PROJECT` environment variable is already defined in the
-process. You don't need to specify it when running the commands.
+The `DRUPAL_RECOMMENDED_PROJECT` environment variable is already defined in
+the process. You don't need to specify it when running the commands.
 
 These Docker commands help maintain code quality and compatibility across
-different Drupal versions. Make sure to run these checks before submitting pull
-requests or merging changes into the main branch.
+different Drupal versions.
+
+Make sure to run these checks before submitting pull requests or merging
+changes into the main branch.
 
 ## CONFIGURATION
 
 ### Basic Setup
-- Configure global sentiment analysis settings at `/admin/config/analyze/sentiment`
+- Configure global sentiment analysis settings at
+`/admin/config/analyze/sentiment`
 - Configure AI provider settings at `/admin/config/analyze/ai`
 
 ### Content Type Configuration
@@ -115,10 +120,12 @@ You can enable/disable and configure sentiments per content type:
    - Find the "Sentiment Analysis" settings
    - Enable/disable specific sentiment metrics
 
-The settings can be configured globally at `/admin/config/analyze/sentiment` and then enabled/disabled per content type or piece of content.
+The settings can be configured globally at `/admin/config/analyze/sentiment`
+and then enabled/disabled per content type or piece of content.
 
 ### Analysis Metrics
-The module comes with several predefined analysis metrics that can be managed at `/admin/config/analyze/sentiment`:
+The module comes with several predefined analysis metrics that can be managed
+at `/admin/config/analyze/sentiment`:
 
 - **Overall Sentiment**: Evaluate content from Negative to Positive
 - **Engagement Level**: Measure interaction from Passive to Interactive

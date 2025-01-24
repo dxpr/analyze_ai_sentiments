@@ -146,14 +146,6 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function getEntityTypeSettingsForm(string $entity_type_id, ?string $bundle = NULL): array {
-    // Only use parent implementation which will use getConfigurableSettings()
-    return parent::getEntityTypeSettingsForm($entity_type_id, $bundle);
-  }
-
-  /**
    * Gets the enabled sentiments for an entity type and bundle.
    *
    * @param string $entity_type_id
@@ -207,7 +199,8 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
    *   The render array for the status table.
    */
   private function createStatusTable(string $message): array {
-    // If this is the AI provider message and user has permission, append the settings link.
+    // If this is the AI provider message and user has permission,
+    // append the settings link.
     if ($message === 'No chat AI provider is configured for sentiment analysis.' && $this->currentUser->hasPermission('administer analyze settings')) {
       $link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form');
       $message = $this->t('No chat AI provider is configured for sentiment analysis. @link', ['@link' => $link->toString()]);
@@ -245,7 +238,7 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
 
     $scores = $this->analyzeSentiment($entity);
 
-    // For summary, we'll just show the first enabled sentiment gauge if available.
+    // We'll just show the first enabled sentiment gauge if available.
     $sentiment = reset($enabled_sentiments);
     $id = key($enabled_sentiments);
 
@@ -266,7 +259,8 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
       ];
     }
 
-    // If no scores available but everything is configured correctly, show a helpful message.
+    // If no scores available but everything is configured correctly,
+    // show a helpful message.
     if (!empty($content = $this->getHtml($entity))) {
       return $this->createStatusTable('No chat AI provider is configured for sentiment analysis.');
     }
@@ -365,7 +359,8 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
     // Clean up the content for sentiment analysis.
     $content = strip_tags($content);
     $content = str_replace('&nbsp;', ' ', $content);
-    // Replace multiple whitespace characters (spaces, tabs, newlines) with a single space.
+    // Replace multiple whitespace characters (spaces, tabs, newlines)
+    // with a single space.
     $content = preg_replace('/\s+/', ' ', $content);
     $content = trim($content);
 
@@ -444,7 +439,6 @@ EOT;
       // Get response.
       $messages = new ChatInput($chat_array);
       $message = $ai_provider->chat($messages, $defaults['model_id'])->getNormalized();
-      $raw_response = $message->getText();
 
       // Use the injected PromptJsonDecoder service.
       $decoded = $this->promptJsonDecoder->decode($message);
@@ -484,13 +478,6 @@ EOT;
    */
   public function access(EntityInterface $entity): bool {
     return $this->currentUser->hasPermission('access content');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getFullReportUrl(EntityInterface $entity): ?Url {
-    return parent::getFullReportUrl($entity);
   }
 
   /**
@@ -571,7 +558,12 @@ EOT;
   }
 
   /**
+   * Gets the configurable settings for this analyzer.
    *
+   * Defines the form elements for configuring sentiment metrics.
+   *
+   * @return array
+   *   An array of configurable settings.
    */
   public function getConfigurableSettings(): array {
     $sentiments = $this->getConfiguredSentiments();
@@ -596,7 +588,10 @@ EOT;
   }
 
   /**
+   * Gets the AI provider instance configured for chat operations.
    *
+   * @return \Drupal\ai\AiProviderInterface|null
+   *   The configured AI provider, or NULL if none available.
    */
   private function getAiProvider() {
     // Check if we have any chat providers available.
@@ -620,7 +615,10 @@ EOT;
   }
 
   /**
+   * Gets the default model configuration for chat operations.
    *
+   * @return array|null
+   *   Array containing provider_id and model_id, or NULL if not configured.
    */
   private function getDefaultModel() {
     $defaults = $this->aiProvider->getDefaultProviderForOperationType('chat');
