@@ -1,0 +1,62 @@
+analyze_ai_sentiment.settings:
+  type: config_object
+  label: 'Sentiment Analysis Settings'
+  mapping:
+    sentiments:
+      type: sequence
+      label: 'Sentiments'
+      sequence:
+        type: mapping
+        mapping:
+          id:
+            type: string
+            label: 'ID'
+          label:
+            type: label
+            label: 'Label'
+          min_label:
+            type: label
+            label: 'Minimum Label'
+          mid_label:
+            type: label
+            label: 'Middle Label'
+          max_label:
+            type: label
+            label: 'Maximum Label'
+          weight:
+            type: integer
+            label: 'Weight'
+
+analyze_ai_sentiment.entity_settings:
+  type: config_object
+  label: 'Entity-specific Sentiment Settings'
+  mapping:
+    '*':
+      type: mapping
+      label: 'Entity Type Settings'
+      mapping:
+        '*':
+          type: boolean
+          label: 'Sentiment Enabled'
+
+analyze.entity_settings.*.analyzers.ai_sentiment_analyzer.settings:
+  type: mapping
+  label: 'Sentiment Analyzer Settings'
+  mapping:
+    sentiments:
+      type: sequence
+      label: 'Enabled Sentiments'
+      sequence:
+        type: boolean
+        label: 'Sentiment Enabled'
+
+analyze.plugin_settings.*.*.*:
+  type: mapping
+  label: 'Analyzer Settings'
+  mapping:
+    sentiments:
+      type: sequence
+      label: 'Sentiment Settings'
+      sequence:
+        type: boolean
+        label: 'Sentiment Enabled' 

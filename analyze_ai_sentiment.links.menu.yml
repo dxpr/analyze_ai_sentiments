@@ -1,0 +1,6 @@
+analyze_ai_sentiment.settings:
+  title: 'Sentiment Analysis'
+  description: 'Configure sentiment analysis metrics and labels'
+  parent: system.admin_config_analyze
+  route_name: analyze_ai_sentiment.settings
+  weight: 0 

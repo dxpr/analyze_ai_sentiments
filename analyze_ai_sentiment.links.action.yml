@@ -1,0 +1,5 @@
+analyze_ai_sentiment.add_sentiment:
+  route_name: analyze_ai_sentiment.add_sentiment
+  title: 'Add sentiment'
+  appears_on:
+    - analyze_ai_sentiment.settings 

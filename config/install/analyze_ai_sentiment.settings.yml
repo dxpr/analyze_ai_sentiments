@@ -1,0 +1,25 @@
+sentiments:
+  trust:
+    label: 'Trust & Credibility'
+    min_label: 'Overly Promotional'
+    mid_label: 'Informative'
+    max_label: 'Authoritative'
+    weight: 0
+  objectivity:
+    label: 'Objectivity & Bias'
+    min_label: 'Opinion-Based'
+    mid_label: 'Balanced'
+    max_label: 'Fact-Based'
+    weight: 1
+  audience_vibe_check:
+    label: 'Audience Vibe Check'
+    min_label: 'Gen Z'
+    mid_label: 'Millennial'
+    max_label: 'Boomer'
+    weight: 2
+  reading_level:
+    label: 'CEFR Reading Level'
+    min_label: 'A1 (Beginner)'
+    mid_label: 'B2 (Upper Intermediate)'
+    max_label: 'C2 (Proficient)'
+    weight: 3 

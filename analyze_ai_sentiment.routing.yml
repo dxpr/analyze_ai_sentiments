@@ -1,0 +1,23 @@
+analyze_ai_sentiment.settings:
+  path: '/admin/config/analyze/sentiment'
+  defaults:
+    _form: '\Drupal\analyze_ai_sentiment\Form\SentimentSettingsForm'
+    _title: 'Sentiment Analysis Settings'
+  requirements:
+    _permission: 'administer site configuration'
+
+analyze_ai_sentiment.add_sentiment:
+  path: '/admin/config/analyze/ai-sentiment/add'
+  defaults:
+    _form: '\Drupal\analyze_ai_sentiment\Form\AddSentimentForm'
+    _title: 'Add Sentiment'
+  requirements:
+    _permission: 'administer site configuration'
+
+analyze_ai_sentiment.delete_sentiment:
+  path: '/admin/config/analyze/ai-sentiment/{sentiment_id}/delete'
+  defaults:
+    _form: '\Drupal\analyze_ai_sentiment\Form\DeleteSentimentForm'
+    _title: 'Delete Sentiment'
+  requirements:
+    _permission: 'administer site configuration' 
