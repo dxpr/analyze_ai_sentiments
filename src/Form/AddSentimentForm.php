@@ -33,7 +33,7 @@ class AddSentimentForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('config.factory')
     );
@@ -64,7 +64,8 @@ class AddSentimentForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
+    /** @var array<string, mixed> $form */
     $form['description'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
@@ -154,7 +155,8 @@ class AddSentimentForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
+    /** @var array<string, mixed> $form */
     $config = $this->configFactory->getEditable('analyze_ai_sentiment.settings');
     $sentiments = $config->get('sentiments') ?: [];
 

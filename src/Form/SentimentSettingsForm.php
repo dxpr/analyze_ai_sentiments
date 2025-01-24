@@ -21,14 +21,15 @@ class SentimentSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() {
+  protected function getEditableConfigNames(): array {
+    /** @var array<string> */
     return ['analyze_ai_sentiment.settings'];
   }
 
   /**
    * Gets the default sentiment configurations.
    *
-   * @return array
+   * @return array<string, array<string, mixed>>
    *   Array of default sentiment configurations.
    */
   public function getDefaultSentiments(): array {
@@ -74,7 +75,8 @@ class SentimentSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
+    /** @var array<string, mixed> $form */
     $config = $this->config('analyze_ai_sentiment.settings');
     $sentiments = $config->get('sentiments') ?: $this->getDefaultSentiments();
 
@@ -196,7 +198,8 @@ class SentimentSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
+    /** @var array<string, mixed> $form */
     $sentiments = [];
     foreach ($form_state->getValue('sentiments') as $id => $values) {
       $sentiments[$id] = [
