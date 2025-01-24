@@ -198,40 +198,49 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
   }
 
   /**
+   * Creates a fallback status table.
+   *
+   * @param string $message
+   *   The status message to display.
+   *
+   * @return array
+   *   The render array for the status table.
+   */
+  private function createStatusTable(string $message): array {
+    // If this is the AI provider message and user has permission, append the settings link
+    if ($message === 'No chat AI provider is configured for sentiment analysis.' && $this->currentUser->hasPermission('administer analyze settings')) {
+      $link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form');
+      $message = $this->t('No chat AI provider is configured for sentiment analysis. @link', ['@link' => $link->toString()]);
+    }
+
+    return [
+      '#theme' => 'analyze_table',
+      '#table_title' => 'Sentiment Analysis',
+      '#rows' => [
+        [
+          'label' => 'Status',
+          'data' => $message,
+        ],
+      ],
+    ];
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function renderSummary(EntityInterface $entity): array {
-    // First check if the plugin itself is enabled for this entity
     $status_config = $this->getConfigFactory()->get('analyze.settings');
     $status = $status_config->get('status') ?? [];
     $entity_type = $entity->getEntityTypeId();
     $bundle = $entity->bundle();
     
     if (!isset($status[$entity_type][$bundle][$this->getPluginId()])) {
-      return [
-        '#theme' => 'analyze_table',
-        '#table_title' => 'Sentiment Analysis',
-        '#rows' => [
-          [
-            'label' => 'Status',
-            'data' => 'Sentiment analysis is not enabled for this content type.',
-          ],
-        ],
-      ];
+      return $this->createStatusTable('Sentiment analysis is not enabled for this content type.');
     }
 
     $enabled_sentiments = $this->getEnabledSentiments($entity->getEntityTypeId(), $entity->bundle());
     if (empty($enabled_sentiments)) {
-      return [
-        '#theme' => 'analyze_table',
-        '#table_title' => 'Sentiment Analysis',
-        '#rows' => [
-          [
-            'label' => 'Status',
-            'data' => 'No sentiment metrics are currently enabled.',
-          ],
-        ],
-      ];
+      return $this->createStatusTable('No sentiment metrics are currently enabled.');
     }
 
     $scores = $this->analyzeSentiment($entity);
@@ -259,57 +268,43 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
     
     // If no scores available but everything is configured correctly, show a helpful message
     if (!empty($content = $this->getHtml($entity))) {
-      return [
-        '#theme' => 'analyze_table',
-        '#table_title' => 'Sentiment Analysis',
-        '#rows' => [
-          [
-            'label' => 'Status',
-            'data' => $this->t('No chat AI provider is configured for sentiment analysis. Please configure one in the %ai_settings_link.', [
-              '%ai_settings_link' => Link::createFromRoute($this->t('AI settings'), 'ai.settings_form')
-                  ->toString(),
-            ]),
-          ],
-        ],
-        '#attached' => [
-          'library' => ['core/drupal.dialog.ajax'],
-        ],
-      ];
+      return $this->createStatusTable('No chat AI provider is configured for sentiment analysis.');
     }
     
-    return [
-      '#theme' => 'analyze_table',
-      '#table_title' => 'Sentiment Analysis',
-      '#rows' => [
-        [
-          'label' => 'Status',
-          'data' => 'No content available for analysis.',
-        ],
-      ],
-    ];
+    return $this->createStatusTable('No content available for analysis.');
   }
 
   /**
    * {@inheritdoc}
    */
   public function renderFullReport(EntityInterface $entity): array {
-    // First check if the plugin itself is enabled for this entity
     $status_config = $this->getConfigFactory()->get('analyze.settings');
     $status = $status_config->get('status') ?? [];
     $entity_type = $entity->getEntityTypeId();
     $bundle = $entity->bundle();
     
     if (!isset($status[$entity_type][$bundle][$this->getPluginId()])) {
-      return [];
+      return $this->createStatusTable('Sentiment analysis is not enabled for this content type.');
     }
 
     $enabled_sentiments = $this->getEnabledSentiments($entity->getEntityTypeId(), $entity->bundle());
     if (empty($enabled_sentiments)) {
-      return [];
+      return $this->createStatusTable('No sentiment metrics are currently enabled.');
     }
 
     $scores = $this->analyzeSentiment($entity);
     
+    // If no scores available but content exists, show the table message
+    if (empty($scores) && !empty($this->getHtml($entity))) {
+      return $this->createStatusTable('No chat AI provider is configured for sentiment analysis.');
+    }
+    
+    // If no content available, show that message
+    if (empty($this->getHtml($entity))) {
+      return $this->createStatusTable('No content available for analysis.');
+    }
+
+    // Only build the gauge display if we have scores
     $build = [
       '#type' => 'container',
       '#attributes' => [
@@ -340,10 +335,6 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
           '#display_value' => sprintf('%+.1f', $scores[$id]),
         ];
       }
-    }
-    
-    if (count($build) <= 1) {
-      return [];
     }
     
     return $build;
@@ -398,10 +389,6 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
       // Get the AI provider
       $ai_provider = $this->getAiProvider();
       if (!$ai_provider) {
-        $this->messenger->addError($this->t('No chat AI provider is configured for sentiment analysis. Please configure one in the %ai_settings_link.', [
-          '%ai_settings_link' => Link::createFromRoute($this->t('AI settings'), 'ai.settings_form')
-              ->toString(),
-        ]));
         return [];
       }
 
@@ -510,7 +497,19 @@ EOT;
    * {@inheritdoc}
    */
   public function extraSummaryLinks(EntityInterface $entity): array {
-    return [];
+    $links = [];
+    
+    // Add settings link if user has permission
+    if ($this->currentUser->hasPermission('administer analyze settings')) {
+      $links[] = [
+        '#type' => 'link',
+        '#title' => $this->t('Configure sentiment metrics'),
+        '#url' => Url::fromRoute('analyze_ai_sentiment.settings'),
+        '#attributes' => ['class' => ['analyze-settings-link']],
+      ];
+    }
+    
+    return $links;
   }
 
   /**
