@@ -467,39 +467,6 @@ EOT;
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function isApplicable(string $entity_type, ?string $bundle = NULL): bool {
-    return TRUE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function access(EntityInterface $entity): bool {
-    return $this->currentUser->hasPermission('access content');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function extraSummaryLinks(EntityInterface $entity): array {
-    $links = [];
-
-    // Add settings link if user has permission.
-    if ($this->currentUser->hasPermission('administer analyze settings')) {
-      $links[] = [
-        '#type' => 'link',
-        '#title' => $this->t('Configure sentiment metrics'),
-        '#url' => Url::fromRoute('analyze_ai_sentiment.settings'),
-        '#attributes' => ['class' => ['analyze-settings-link']],
-      ];
-    }
-
-    return $links;
-  }
-
-  /**
    * Gets the public settings for this analyzer.
    *
    * @param string $entity_type_id
