@@ -1,0 +1,10 @@
+analyze_ai_sentiment.settings:
+  route_name: analyze_ai_sentiment.settings
+  title: 'Settings'
+  base_route: analyze_ai_sentiment.settings
+
+analyze_ai_sentiment.batch:
+  route_name: analyze_ai_sentiment.batch
+  title: 'Batch Analysis'
+  base_route: analyze_ai_sentiment.settings
+  weight: 10

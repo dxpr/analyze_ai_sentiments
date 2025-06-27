@@ -1,0 +1,99 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the analyze_ai_sentiment module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function analyze_ai_sentiment_schema() {
+  $schema = [];
+
+  $schema['analyze_ai_sentiment_results'] = [
+    'description' => 'Stores AI sentiment analysis results for content entities.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique analysis result ID.',
+      ],
+      'entity_type' => [
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'The entity type being analyzed.',
+      ],
+      'entity_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The entity ID being analyzed.',
+      ],
+      'entity_revision_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'description' => 'The entity revision ID (if applicable).',
+      ],
+      'langcode' => [
+        'type' => 'varchar',
+        'length' => 12,
+        'not null' => TRUE,
+        'description' => 'The language code of the analyzed content.',
+      ],
+      'sentiment_id' => [
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'The sentiment metric identifier (e.g., "positivity", "engagement").',
+      ],
+      'score' => [
+        'type' => 'numeric',
+        'precision' => 3,
+        'scale' => 2,
+        'not null' => TRUE,
+        'description' => 'The sentiment score (-1.00 to +1.00).',
+      ],
+      'content_hash' => [
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'SHA256 hash of the analyzed content.',
+      ],
+      'config_hash' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'description' => 'MD5 hash of the sentiment configuration.',
+      ],
+      'analyzed_timestamp' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Unix timestamp when the analysis was performed.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => [
+      'entity_sentiment_lang' => ['entity_type', 'entity_id', 'sentiment_id', 'langcode'],
+    ],
+    'indexes' => [
+      'content_hash' => ['content_hash'],
+      'sentiment_id' => ['sentiment_id'],
+      'analyzed_timestamp' => ['analyzed_timestamp'],
+      'entity_type_bundle' => ['entity_type', 'entity_id'],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Create the sentiment analysis results table.
+ */
+function analyze_ai_sentiment_update_10001() {
+  $schema = analyze_ai_sentiment_schema();
+  \Drupal::database()->schema()->createTable('analyze_ai_sentiment_results', $schema['analyze_ai_sentiment_results']);
+}

@@ -1,0 +1,157 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\analyze_ai_sentiment\Form;
+
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\analyze_ai_sentiment\Service\SentimentBatchService;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Batch form for sentiment analysis.
+ */
+final class SentimentBatchForm extends FormBase {
+
+  public function __construct(
+    private readonly SentimentBatchService $batchService,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('analyze_ai_sentiment.batch_service'),
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId(): string {
+    return 'analyze_ai_sentiment_batch';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state): array {
+    $form['description'] = [
+      '#markup' => $this->t('<p>Analyze content for sentiment metrics. Results are cached to improve performance. Only published content will be analyzed.</p>'),
+    ];
+
+    $available_bundles = $this->batchService->getAvailableEntityBundles();
+    
+    if (empty($available_bundles)) {
+      $form['no_bundles'] = [
+        '#markup' => $this->t('<p>No content types have sentiment analysis enabled. Please configure the Analyze module first.</p>'),
+      ];
+      return $form;
+    }
+
+    $form['entity_types'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this->t('Content Types'),
+      '#description' => $this->t('Select which content types to analyze for sentiment.'),
+      '#options' => $available_bundles,
+      '#required' => TRUE,
+    ];
+
+    $form['force_refresh'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Force re-analysis'),
+      '#description' => $this->t('Re-analyze content even if recent results exist. This will replace all cached results.'),
+    ];
+
+    $form['limit'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Limit'),
+      '#description' => $this->t('Maximum number of entities to analyze (0 for no limit).'),
+      '#default_value' => 100,
+      '#min' => 0,
+      '#max' => 10000,
+    ];
+
+    $form['actions'] = [
+      '#type' => 'actions',
+      'submit' => [
+        '#type' => 'submit',
+        '#value' => $this->t('Start Sentiment Analysis'),
+        '#button_type' => 'primary',
+      ],
+    ];
+
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
+    $values = $form_state->getValues();
+    $selected_types = array_filter($values['entity_types']);
+    
+    $entities = $this->batchService->getEntitiesForAnalysis(
+      $selected_types,
+      (bool) $values['force_refresh'],
+      (int) $values['limit']
+    );
+    
+    if (empty($entities)) {
+      $this->messenger()->addWarning($this->t('No entities found for analysis.'));
+      return;
+    }
+
+    $total_entities = count($entities);
+    $batch = [
+      'title' => $this->t('Analyzing @count entities for sentiment', ['@count' => $total_entities]),
+      'operations' => [],
+      'finished' => [static::class, 'batchFinished'],
+      'progressive' => TRUE,
+    ];
+
+    // Process in chunks of 5 for better performance and memory management.
+    $chunks = array_chunk($entities, 5);
+    foreach ($chunks as $chunk) {
+      $batch['operations'][] = [
+        [$this->batchService, 'processBatch'],
+        [$chunk, (bool) $values['force_refresh'], $total_entities],
+      ];
+    }
+
+    batch_set($batch);
+  }
+
+  /**
+   * Batch finished callback.
+   *
+   * @param bool $success
+   *   Whether the batch completed successfully.
+   * @param array $results
+   *   The batch results.
+   * @param array $operations
+   *   The batch operations.
+   */
+  public static function batchFinished(bool $success, array $results, array $operations): void {
+    if ($success) {
+      $processed = $results['processed'] ?? 0;
+      \Drupal::messenger()->addStatus(\Drupal::translation()->formatPlural(
+        $processed,
+        'Successfully analyzed @count entity for sentiment.',
+        'Successfully analyzed @count entities for sentiment.',
+        ['@count' => $processed]
+      ));
+
+      if (!empty($results['errors'])) {
+        foreach ($results['errors'] as $error) {
+          \Drupal::messenger()->addError($error);
+        }
+      }
+    } else {
+      \Drupal::messenger()->addError(t('Sentiment analysis batch processing failed.'));
+    }
+  }
+
+}

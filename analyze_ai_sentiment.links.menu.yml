@@ -3,4 +3,11 @@ analyze_ai_sentiment.settings:
   description: 'Configure sentiment analysis metrics and labels'
   parent: system.admin_config_analyze
   route_name: analyze_ai_sentiment.settings
-  weight: 0 
+  weight: 0
+
+analyze_ai_sentiment.batch:
+  title: 'Batch Sentiment Analysis'
+  description: 'Analyze multiple entities for sentiment metrics.'
+  route_name: analyze_ai_sentiment.batch
+  parent: system.admin_config_analyze
+  weight: 20 

@@ -20,4 +20,12 @@ analyze_ai_sentiment.delete_sentiment:
     _form: '\Drupal\analyze_ai_sentiment\Form\DeleteSentimentForm'
     _title: 'Delete Sentiment'
   requirements:
-    _permission: 'administer site configuration' 
+    _permission: 'administer site configuration'
+
+analyze_ai_sentiment.batch:
+  path: '/admin/config/analyze/sentiment/batch'
+  defaults:
+    _form: 'Drupal\analyze_ai_sentiment\Form\SentimentBatchForm'
+    _title: 'Batch Sentiment Analysis'
+  requirements:
+    _permission: 'administer analyze settings' 

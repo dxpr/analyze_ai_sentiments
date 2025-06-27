@@ -16,6 +16,7 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface;
 use Drupal\Core\Link;
+use Drupal\analyze_ai_sentiment\Service\SentimentStorageService;
 
 /**
  * A sentiment analyzer that uses AI to analyze content sentiment.
@@ -57,6 +58,13 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
   protected PromptJsonDecoderInterface $promptJsonDecoder;
 
   /**
+   * The sentiment storage service.
+   *
+   * @var \Drupal\analyze_ai_sentiment\Service\SentimentStorageService
+   */
+  protected SentimentStorageService $storage;
+
+  /**
    * Creates the plugin.
    *
    * @param array<string, mixed> $configuration
@@ -83,6 +91,8 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
    *   The messenger service.
    * @param \Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface $promptJsonDecoder
    *   The prompt JSON decoder service.
+   * @param \Drupal\analyze_ai_sentiment\Service\SentimentStorageService $storage
+   *   The sentiment storage service.
    */
   public function __construct(
     array $configuration,
@@ -97,12 +107,14 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
     protected LanguageManagerInterface $languageManager,
     MessengerInterface $messenger,
     PromptJsonDecoderInterface $promptJsonDecoder,
+    SentimentStorageService $storage,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $helper, $currentUser);
     $this->aiProvider = $aiProvider;
     $this->configFactory = $config_factory;
     $this->messenger = $messenger;
     $this->promptJsonDecoder = $promptJsonDecoder;
+    $this->storage = $storage;
   }
 
   /**
@@ -122,6 +134,7 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
       $container->get('language_manager'),
       $container->get('messenger'),
       $container->get('ai.prompt_json_decode'),
+      $container->get('analyze_ai_sentiment.storage'),
     );
   }
 
@@ -236,7 +249,16 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
       return $this->createStatusTable('No sentiment metrics are currently enabled.');
     }
 
-    $scores = $this->analyzeSentiment($entity);
+    // Try to get cached scores first.
+    $scores = $this->storage->getScores($entity);
+    
+    // If no cached scores, perform analysis.
+    if (empty($scores)) {
+      $scores = $this->analyzeSentiment($entity);
+      if (!empty($scores)) {
+        $this->storage->saveScores($entity, $scores);
+      }
+    }
 
     // We'll just show the first enabled sentiment gauge if available.
     $sentiment = reset($enabled_sentiments);
@@ -286,7 +308,16 @@ final class AiSentimentAnalyzer extends AnalyzePluginBase {
       return $this->createStatusTable('No sentiment metrics are currently enabled.');
     }
 
-    $scores = $this->analyzeSentiment($entity);
+    // Try to get cached scores first.
+    $scores = $this->storage->getScores($entity);
+    
+    // If no cached scores, perform analysis.
+    if (empty($scores)) {
+      $scores = $this->analyzeSentiment($entity);
+      if (!empty($scores)) {
+        $this->storage->saveScores($entity, $scores);
+      }
+    }
 
     // If no scores available but content exists, show the table message.
     if (empty($scores) && !empty($this->getHtml($entity))) {

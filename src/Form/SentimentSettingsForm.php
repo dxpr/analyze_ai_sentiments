@@ -215,6 +215,9 @@ class SentimentSettingsForm extends ConfigFormBase {
       ->set('sentiments', $sentiments)
       ->save();
 
+    // Invalidate all cached sentiment analysis results since configuration changed.
+    \Drupal::service('analyze_ai_sentiment.storage')->invalidateConfigCache();
+
     parent::submitForm($form, $form_state);
   }
 
