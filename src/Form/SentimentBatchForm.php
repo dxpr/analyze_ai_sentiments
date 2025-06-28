@@ -45,8 +45,11 @@ final class SentimentBatchForm extends FormBase {
     $available_bundles = $this->batchService->getAvailableEntityBundles();
     
     if (empty($available_bundles)) {
+      $configure_url = \Drupal\Core\Url::fromRoute('analyze.analyze_settings');
       $form['no_bundles'] = [
-        '#markup' => $this->t('<p>No content types have sentiment analysis enabled. Please configure the Analyze module first.</p>'),
+        '#markup' => $this->t('<p>No content types have sentiment analysis enabled. Please <a href="@url">configure the Analyze module</a> first.</p>', [
+          '@url' => $configure_url->toString(),
+        ]),
       ];
       return $form;
     }

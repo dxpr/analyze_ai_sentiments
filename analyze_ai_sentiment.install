@@ -91,9 +91,28 @@ function analyze_ai_sentiment_schema() {
 }
 
 /**
- * Create the sentiment analysis results table.
+ * Implements hook_install().
  */
-function analyze_ai_sentiment_update_10001() {
+function analyze_ai_sentiment_install() {
+  // Create tables from schema.
   $schema = analyze_ai_sentiment_schema();
-  \Drupal::database()->schema()->createTable('analyze_ai_sentiment_results', $schema['analyze_ai_sentiment_results']);
+  $database = \Drupal::database();
+  foreach ($schema as $table_name => $table_spec) {
+    if (!$database->schema()->tableExists($table_name)) {
+      $database->schema()->createTable($table_name, $table_spec);
+    }
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function analyze_ai_sentiment_uninstall() {
+  // Clean up any remaining data if tables exist.
+  $database = \Drupal::database();
+  $schema = $database->schema();
+  
+  if ($schema->tableExists('analyze_ai_sentiment_results')) {
+    $database->delete('analyze_ai_sentiment_results')->execute();
+  }
 }

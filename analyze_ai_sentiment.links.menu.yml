@@ -1,13 +1,13 @@
 analyze_ai_sentiment.settings:
-  title: 'Sentiment Analysis'
+  title: 'AI Sentiment Analysis'
   description: 'Configure sentiment analysis metrics and labels'
-  parent: system.admin_config_analyze
+  parent: ai.admin_settings
   route_name: analyze_ai_sentiment.settings
   weight: 0
 
 analyze_ai_sentiment.batch:
-  title: 'Batch Sentiment Analysis'
+  title: 'AI Batch Sentiment Analysis'
   description: 'Analyze multiple entities for sentiment metrics.'
   route_name: analyze_ai_sentiment.batch
-  parent: system.admin_config_analyze
+  parent: ai.admin_settings
   weight: 20 
