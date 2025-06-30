@@ -111,7 +111,7 @@ function analyze_ai_sentiment_uninstall() {
   // Clean up any remaining data if tables exist.
   $database = \Drupal::database();
   $schema = $database->schema();
-  
+
   if ($schema->tableExists('analyze_ai_sentiment_results')) {
     $database->delete('analyze_ai_sentiment_results')->execute();
   }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\analyze_ai_sentiment\Form;
 
+use Drupal\Core\Url;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\analyze_ai_sentiment\Service\SentimentBatchService;
@@ -43,9 +44,9 @@ final class SentimentBatchForm extends FormBase {
     ];
 
     $available_bundles = $this->batchService->getAvailableEntityBundles();
-    
+
     if (empty($available_bundles)) {
-      $configure_url = \Drupal\Core\Url::fromRoute('analyze.analyze_settings');
+      $configure_url = Url::fromRoute('analyze.analyze_settings');
       $form['no_bundles'] = [
         '#markup' => $this->t('<p>No content types have sentiment analysis enabled. Please <a href="@url">configure the Analyze module</a> first.</p>', [
           '@url' => $configure_url->toString(),
@@ -95,13 +96,13 @@ final class SentimentBatchForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $values = $form_state->getValues();
     $selected_types = array_filter($values['entity_types']);
-    
+
     $entities = $this->batchService->getEntitiesForAnalysis(
       $selected_types,
       (bool) $values['force_refresh'],
       (int) $values['limit']
     );
-    
+
     if (empty($entities)) {
       $this->messenger()->addWarning($this->t('No entities found for analysis.'));
       return;
@@ -152,7 +153,8 @@ final class SentimentBatchForm extends FormBase {
           \Drupal::messenger()->addError($error);
         }
       }
-    } else {
+    }
+    else {
       \Drupal::messenger()->addError(t('Sentiment analysis batch processing failed.'));
     }
   }

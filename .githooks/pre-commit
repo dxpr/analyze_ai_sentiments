@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# Pre-commit hook for Drupal code quality
+# This hook runs drupal-lint-auto-fix and blocks commits if issues remain
+
+set -e
+
+echo "🔍 Running pre-commit Drupal code quality checks..."
+
+# Check if Docker and docker-compose are available
+if ! command -v docker &> /dev/null; then
+    echo "❌ Docker is not installed or not in PATH"
+    echo "   Please install Docker to run code quality checks"
+    exit 1
+fi
+
+if ! command -v docker-compose &> /dev/null && ! command -v docker &> /dev/null; then
+    echo "❌ docker-compose is not available"
+    echo "   Please install docker-compose or use 'docker compose'"
+    exit 1
+fi
+
+# Determine the correct docker compose command
+DOCKER_COMPOSE_CMD="docker-compose"
+if ! command -v docker-compose &> /dev/null; then
+    DOCKER_COMPOSE_CMD="docker compose"
+fi
+
+echo "🔧 Running Drupal lint auto-fix..."
+
+# Run auto-fix first
+if ! $DOCKER_COMPOSE_CMD run --rm drupal-lint-auto-fix; then
+    echo "❌ Auto-fix failed. Please check your Docker setup."
+    exit 1
+fi
+
+echo "✅ Auto-fix completed"
+
+echo "🧪 Checking for remaining lint issues..."
+
+# Capture lint output and check for violations
+LINT_OUTPUT=$($DOCKER_COMPOSE_CMD run --rm drupal-lint 2>&1)
+LINT_EXIT_CODE=$?
+
+# Check if there are any violations in the output
+if echo "$LINT_OUTPUT" | grep -q "FOUND.*ERRORS\|FOUND.*WARNINGS"; then
+    echo "❌ Drupal lint issues found that cannot be auto-fixed:"
+    echo ""
+    echo "$LINT_OUTPUT" | grep -A 20 -B 5 "FOUND.*ERRORS\|FOUND.*WARNINGS" || echo "$LINT_OUTPUT"
+    echo ""
+    echo "💡 Please fix these issues manually before committing:"
+    echo "   1. Review the errors/warnings above"
+    echo "   2. Fix them manually in your code"
+    echo "   3. Run 'docker compose run --rm drupal-lint' to verify"
+    echo "   4. Try committing again"
+    echo ""
+    exit 1
+fi
+
+# Check if lint command failed for other reasons
+if [ $LINT_EXIT_CODE -ne 0 ]; then
+    echo "❌ Drupal lint command failed:"
+    echo "$LINT_OUTPUT"
+    exit 1
+fi
+
+echo "✅ All Drupal code quality checks passed!"
+echo "🚀 Proceeding with commit..."
+
+exit 0

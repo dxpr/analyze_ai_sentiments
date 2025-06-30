@@ -8,9 +8,9 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
+use Drupal\Component\Datetime\TimeInterface;
 
 /**
  * Service for storing and retrieving sentiment analysis results.
@@ -24,7 +24,7 @@ final class SentimentStorageService {
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly RendererInterface $renderer,
-    private readonly LanguageManagerInterface $languageManager,
+    private readonly TimeInterface $time,
   ) {}
 
   /**
@@ -33,13 +33,13 @@ final class SentimentStorageService {
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity to get the scores for.
    *
-   * @return array
+   * @return array<string, float>
    *   Array of sentiment_id => score pairs.
    */
   public function getScores(EntityInterface $entity): array {
     $content_hash = $this->generateContentHash($entity);
     $config_hash = $this->generateConfigHash();
-    
+
     $results = $this->database->select('analyze_ai_sentiment_results', 'r')
       ->fields('r', ['sentiment_id', 'score'])
       ->condition('entity_type', $entity->getEntityTypeId())
@@ -58,45 +58,45 @@ final class SentimentStorageService {
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity the scores are for.
-   * @param array $scores
+   * @param array<string, float> $scores
    *   Array of sentiment_id => score pairs.
    */
   public function saveScores(EntityInterface $entity, array $scores): void {
     $content_hash = $this->generateContentHash($entity);
     $config_hash = $this->generateConfigHash();
-    
+
     // Delete existing scores for this entity/language combination.
     $this->database->delete('analyze_ai_sentiment_results')
       ->condition('entity_type', $entity->getEntityTypeId())
       ->condition('entity_id', $entity->id())
       ->condition('langcode', $entity->language()->getId())
       ->execute();
-    
+
     // Insert new scores.
     if (!empty($scores)) {
       $insert = $this->database->insert('analyze_ai_sentiment_results')
         ->fields([
           'entity_type', 'entity_id', 'entity_revision_id', 'langcode',
-          'sentiment_id', 'score', 'content_hash', 'config_hash', 'analyzed_timestamp'
+          'sentiment_id', 'score', 'content_hash', 'config_hash', 'analyzed_timestamp',
         ]);
-      
+
       foreach ($scores as $sentiment_id => $score) {
         // Ensure score is within valid range.
         $score = max(-1.0, min(1.0, (float) $score));
-        
+
         $insert->values([
           'entity_type' => $entity->getEntityTypeId(),
           'entity_id' => $entity->id(),
-          'entity_revision_id' => $entity->getRevisionId(),
+          'entity_revision_id' => method_exists($entity, 'getRevisionId') ? $entity->getRevisionId() : NULL,
           'langcode' => $entity->language()->getId(),
           'sentiment_id' => $sentiment_id,
           'score' => $score,
           'content_hash' => $content_hash,
           'config_hash' => $config_hash,
-          'analyzed_timestamp' => \Drupal::time()->getRequestTime(),
+          'analyzed_timestamp' => $this->time->getRequestTime(),
         ]);
       }
-      
+
       $insert->execute();
     }
   }
@@ -128,7 +128,7 @@ final class SentimentStorageService {
   /**
    * Gets statistics about stored analysis results.
    *
-   * @return array
+   * @return array<string, int>
    *   Array with count statistics.
    */
   public function getStatistics(): array {
@@ -138,9 +138,9 @@ final class SentimentStorageService {
     $query->addExpression('COUNT(DISTINCT sentiment_id)', 'unique_sentiments');
     $query->addExpression('MIN(analyzed_timestamp)', 'oldest_analysis');
     $query->addExpression('MAX(analyzed_timestamp)', 'newest_analysis');
-    
+
     $result = $query->execute()->fetchAssoc();
-    
+
     return [
       'total_results' => (int) $result['total_results'],
       'unique_entities' => (int) $result['unique_entities'],
@@ -153,7 +153,7 @@ final class SentimentStorageService {
   /**
    * Gets average scores by sentiment type.
    *
-   * @return array
+   * @return array<string, float>
    *   Array of sentiment_id => average_score pairs.
    */
   public function getAverageScores(): array {
@@ -176,10 +176,10 @@ final class SentimentStorageService {
   private function generateConfigHash(): string {
     $config = $this->configFactory->get('analyze_ai_sentiment.settings');
     $sentiments = $config->get('sentiments') ?? [];
-    
+
     // Sort to ensure consistent hashing.
     ksort($sentiments);
-    
+
     return hash('md5', serialize($sentiments));
   }
 
@@ -209,23 +209,23 @@ final class SentimentStorageService {
   private function getEntityContent(EntityInterface $entity): string {
     // Use the entity's own language, not the current UI language.
     $langcode = $entity->language()->getId();
-    
+
     // Render the entity in default view mode.
     $view_builder = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId());
     $view = $view_builder->view($entity, 'default', $langcode);
     $rendered = $this->renderer->render($view);
-    
+
     // Convert to string and clean up.
     $content = is_object($rendered) && method_exists($rendered, '__toString')
       ? $rendered->__toString()
       : (string) $rendered;
-    
+
     // Strip HTML tags and normalize whitespace.
     $content = strip_tags($content);
     $content = str_replace('&nbsp;', ' ', $content);
     $content = preg_replace('/\s+/', ' ', $content);
     $content = trim($content);
-    
+
     return $content;
   }
 

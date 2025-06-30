@@ -97,12 +97,31 @@ different Drupal versions.
 Make sure to run these checks before submitting pull requests or merging
 changes into the main branch.
 
+#### Pre-commit Hooks
+
+To automatically enforce code quality, install the pre-commit hook:
+
+```bash
+./scripts/setup-hooks.sh
+```
+
+This sets up a Git pre-commit hook that:
+- Automatically runs `drupal-lint-auto-fix` on every commit
+- Blocks commits if any unfixable lint issues remain
+- Ensures consistent code quality across all contributions
+
+To bypass the hook in emergencies:
+```bash
+git commit --no-verify -m "emergency commit"
+```
+
 ## CONFIGURATION
 
 ### Basic Setup
 - Configure AI provider settings at `/admin/config/ai/providers`
 - Configure and order sentiments at `/admin/config/analyze/sentiment`
-- Enable/disable the analyzer per content type at `/admin/config/content/analyze-settings`
+- Enable/disable the analyzer per content type at
+  `/admin/config/content/analyze-settings`
 
 ### Content Type Configuration
 You can configure sentiment analysis per content type in two ways:
@@ -120,8 +139,10 @@ You can configure sentiment analysis per content type in two ways:
 ### Analysis Metrics
 The module evaluates content across four key dimensions:
 
-- Trust & Credibility: Measures how authoritative vs promotional the content appears
-- Objectivity & Bias: Evaluates the balance between opinion and fact-based content
+- Trust & Credibility: Measures how authoritative vs promotional the
+  content appears
+- Objectivity & Bias: Evaluates the balance between opinion and
+  fact-based content
 - Audience Vibe Check: Identifies the generational targeting of the content
 - CEFR Reading Level: Assesses the content's language proficiency requirements
 

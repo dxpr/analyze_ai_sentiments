@@ -5,11 +5,34 @@ namespace Drupal\analyze_ai_sentiment\Form;
 use Drupal\Core\Url;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\analyze_ai_sentiment\Service\SentimentStorageService;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure sentiment analysis settings.
  */
 class SentimentSettingsForm extends ConfigFormBase {
+
+  /**
+   * The sentiment storage service.
+   */
+  protected SentimentStorageService $sentimentStorage;
+
+  /**
+   * Constructs a SentimentSettingsForm object.
+   */
+  public function __construct(SentimentStorageService $sentiment_storage) {
+    $this->sentimentStorage = $sentiment_storage;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('analyze_ai_sentiment.storage')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -215,8 +238,9 @@ class SentimentSettingsForm extends ConfigFormBase {
       ->set('sentiments', $sentiments)
       ->save();
 
-    // Invalidate all cached sentiment analysis results since configuration changed.
-    \Drupal::service('analyze_ai_sentiment.storage')->invalidateConfigCache();
+    // Invalidate all cached sentiment analysis results since configuration
+    // changed.
+    $this->sentimentStorage->invalidateConfigCache();
 
     parent::submitForm($form, $form_state);
   }

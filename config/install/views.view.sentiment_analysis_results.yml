@@ -8,6 +8,8 @@ dependencies:
     - analyze_ai_sentiment
     - node
     - views_color_scales
+_core:
+  default_config_hash: N0NS4fONEuTHqrzhxLvORys7CNEVqlCaEY5Q8g-urs4
 id: sentiment_analysis_results
 label: 'AI Sentiment Analysis'
 module: views
@@ -22,7 +24,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: 'All Sentiments'
+      title: 'Sentiment Analysis Results'
       fields:
         title:
           id: title
