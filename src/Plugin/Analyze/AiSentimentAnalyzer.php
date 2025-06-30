@@ -268,12 +268,14 @@ final class AISentimentAnalyzer extends AnalyzePluginBase {
 
     // @phpstan-ignore-next-line
     if (!isset($status[$entity_type][$bundle][$this->getPluginId()])) {
-      return $this->createStatusTable('Sentiment analysis is not enabled for this content type.');
+      $settings_link = Link::createFromRoute($this->t('Enable sentiment analysis'), 'analyze.analyze_settings')->toString();
+      return $this->createStatusTable($this->t('Sentiment analysis is not enabled for this content type. @link to configure content types.', ['@link' => $settings_link]));
     }
 
     $enabled_sentiments = $this->getEnabledSentiments($entity->getEntityTypeId(), $entity->bundle());
     if (empty($enabled_sentiments)) {
-      return $this->createStatusTable('No sentiment metrics are currently enabled.');
+      $settings_link = Link::createFromRoute($this->t('Configure sentiment metrics'), 'analyze_ai_sentiment.settings')->toString();
+      return $this->createStatusTable($this->t('No sentiment metrics are currently enabled. @link to select metrics to analyze.', ['@link' => $settings_link]));
     }
 
     // Try to get cached scores first.
@@ -315,10 +317,11 @@ final class AISentimentAnalyzer extends AnalyzePluginBase {
     // If no scores available but everything is configured correctly,
     // show a helpful message.
     if (!empty($content = $this->getHtml($entity))) {
-      return $this->createStatusTable('No chat AI provider is configured for sentiment analysis.');
+      $ai_link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form')->toString();
+      return $this->createStatusTable($this->t('No chat AI provider is configured for sentiment analysis. @link to set up AI services.', ['@link' => $ai_link]));
     }
 
-    return $this->createStatusTable('No content available for analysis.');
+    return $this->createStatusTable($this->t('This content has no text available for sentiment analysis. Add content such as body text, fields, or descriptions to enable analysis.'));
   }
 
   /**
@@ -337,12 +340,14 @@ final class AISentimentAnalyzer extends AnalyzePluginBase {
 
     // @phpstan-ignore-next-line
     if (!isset($status[$entity_type][$bundle][$this->getPluginId()])) {
-      return $this->createStatusTable('Sentiment analysis is not enabled for this content type.');
+      $settings_link = Link::createFromRoute($this->t('Enable sentiment analysis'), 'analyze.analyze_settings')->toString();
+      return $this->createStatusTable($this->t('Sentiment analysis is not enabled for this content type. @link to configure content types.', ['@link' => $settings_link]));
     }
 
     $enabled_sentiments = $this->getEnabledSentiments($entity->getEntityTypeId(), $entity->bundle());
     if (empty($enabled_sentiments)) {
-      return $this->createStatusTable('No sentiment metrics are currently enabled.');
+      $settings_link = Link::createFromRoute($this->t('Configure sentiment metrics'), 'analyze_ai_sentiment.settings')->toString();
+      return $this->createStatusTable($this->t('No sentiment metrics are currently enabled. @link to select metrics to analyze.', ['@link' => $settings_link]));
     }
 
     // Try to get cached scores first.
@@ -358,12 +363,13 @@ final class AISentimentAnalyzer extends AnalyzePluginBase {
 
     // If no scores available but content exists, show the table message.
     if (empty($scores) && !empty($this->getHtml($entity))) {
-      return $this->createStatusTable('No chat AI provider is configured for sentiment analysis.');
+      $ai_link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form')->toString();
+      return $this->createStatusTable($this->t('No chat AI provider is configured for sentiment analysis. @link to set up AI services.', ['@link' => $ai_link]));
     }
 
     // If no content available, show that message.
     if (empty($this->getHtml($entity))) {
-      return $this->createStatusTable('No content available for analysis.');
+      return $this->createStatusTable($this->t('This content has no text available for sentiment analysis. Add content such as body text, fields, or descriptions to enable analysis.'));
     }
 
     // Only build the gauge display if we have scores.
