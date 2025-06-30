@@ -1,3 +1,6 @@
+# Claude AI configuration files
+.claude/
+
 .idea
 deploy.sh
 node_modules
