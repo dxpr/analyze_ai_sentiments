@@ -171,7 +171,7 @@ final class SentimentBatchService {
     $options = [];
     foreach ($status as $entity_type_id => $bundles) {
       foreach ($bundles as $bundle => $analyzers) {
-        if (isset($analyzers['ai_sentiment_analyzer'])) {
+        if (isset($analyzers['analyze_ai_sentiment_analyzer'])) {
           $bundle_info = $this->bundleInfo->getBundleInfo($entity_type_id);
           $label = $bundle_info[$bundle]['label'] ?? $bundle;
           $options["{$entity_type_id}:{$bundle}"] = "{$entity_type_id} - {$label}";

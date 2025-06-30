@@ -5,6 +5,8 @@ namespace Drupal\analyze_ai_sentiment\Form;
 use Drupal\Core\Url;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\analyze_ai_sentiment\Service\SentimentStorageService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -20,8 +22,20 @@ class SentimentSettingsForm extends ConfigFormBase {
 
   /**
    * Constructs a SentimentSettingsForm object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
+   * @param \Drupal\Core\Config\TypedConfigManagerInterface $typed_config_manager
+   *   The typed config manager.
+   * @param \Drupal\analyze_ai_sentiment\Service\SentimentStorageService $sentiment_storage
+   *   The sentiment storage service.
    */
-  public function __construct(SentimentStorageService $sentiment_storage) {
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    TypedConfigManagerInterface $typed_config_manager,
+    SentimentStorageService $sentiment_storage
+  ) {
+    parent::__construct($config_factory, $typed_config_manager);
     $this->sentimentStorage = $sentiment_storage;
   }
 
@@ -30,6 +44,8 @@ class SentimentSettingsForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
+      $container->get('config.factory'),
+      $container->get('config.typed'),
       $container->get('analyze_ai_sentiment.storage')
     );
   }
