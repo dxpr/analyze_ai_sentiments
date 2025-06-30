@@ -116,3 +116,35 @@ function analyze_ai_sentiment_uninstall() {
     $database->delete('analyze_ai_sentiment_results')->execute();
   }
 }
+
+/**
+ * Update plugin ID from ai_sentiment_analyzer to analyze_ai_sentiment_analyzer.
+ */
+function analyze_ai_sentiment_update_8001() {
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('analyze.settings');
+  $status = $config->get('status') ?? [];
+  $updated = FALSE;
+
+  // Update plugin IDs in analyze.settings configuration.
+  foreach ($status as $entity_type => $bundles) {
+    foreach ($bundles as $bundle => $analyzers) {
+      if (isset($analyzers['ai_sentiment_analyzer'])) {
+        // Copy old setting to new plugin ID.
+        $analyzers['analyze_ai_sentiment_analyzer'] = $analyzers['ai_sentiment_analyzer'];
+        // Remove old plugin ID.
+        unset($analyzers['ai_sentiment_analyzer']);
+        // Update the configuration.
+        $status[$entity_type][$bundle] = $analyzers;
+        $updated = TRUE;
+      }
+    }
+  }
+
+  if ($updated) {
+    $config->set('status', $status)->save();
+    return t('Updated sentiment analyzer plugin ID from "ai_sentiment_analyzer" to "analyze_ai_sentiment_analyzer" in analyze settings.');
+  }
+
+  return t('No sentiment analyzer settings found to update.');
+}
