@@ -10,7 +10,7 @@ dependencies:
     - views_color_scales
 _core:
   default_config_hash: N0NS4fONEuTHqrzhxLvORys7CNEVqlCaEY5Q8g-urs4
-id: sentiment_analysis_results
+id: ai_sentiment_analysis_results
 label: 'AI Sentiment Analysis'
 module: views
 description: ''

@@ -21,12 +21,12 @@ use Drupal\analyze_ai_sentiment\Service\SentimentStorageService;
  * A sentiment analyzer that uses AI to analyze content sentiment.
  *
  * @Analyze(
- *   id = "ai_sentiment_analyzer",
+ *   id = "analyze_ai_sentiment_analyzer",
  *   label = @Translation("Sentiment Analysis"),
  *   description = @Translation("Analyzes the sentiment of content using AI.")
  * )
  */
-final class AiSentimentAnalyzer extends AnalyzePluginBase {
+final class AISentimentAnalyzer extends AnalyzePluginBase {
 
   /**
    * The AI provider manager.
