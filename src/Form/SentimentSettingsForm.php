@@ -33,7 +33,7 @@ class SentimentSettingsForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typed_config_manager,
-    SentimentStorageService $sentiment_storage
+    SentimentStorageService $sentiment_storage,
   ) {
     parent::__construct($config_factory, $typed_config_manager);
     $this->sentimentStorage = $sentiment_storage;
