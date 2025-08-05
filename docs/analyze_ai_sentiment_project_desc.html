@@ -1,0 +1,45 @@
+<p>
+  The AI Sentiment Analysis is part of the <a href="https://www.drupal.org/project/ai">AI module</a> ecosystem. It provides comprehensive AI-powered text analysis for Drupal content, measuring various aspects including trust, objectivity, audience targeting, and reading levels.
+</p>
+
+<h3 id="module-project--features">Features</h3>
+<ul>
+  <li>Configurable sentiment analysis:
+    <ul>
+      <li>Add/remove and order sentiments through UI</li>
+      <li>Enable/disable analyzer per content type</li>
+      <li>Enable/disable specific sentiments per content type</li>
+    </ul>
+  </li>
+  <li>Pre-configured sentiment dimensions including:
+    <ul>
+      <li>Trust & Credibility (from Promotional to Authoritative)</li>
+      <li>Objectivity & Bias (from Opinion-Based to Fact-Based)</li>
+      <li>Audience Vibe Check (from Gen Z to Boomer)</li>
+      <li>CEFR Reading Level (from A1 Beginner to C2 Proficient)</li>
+    </ul>
+  </li>
+  <li>Visual gauge displays for easy interpretation</li>
+  <li>Instant AI feedback for content creators</li>
+  <li>Integration with the Analyze framework</li>
+</ul>
+
+<h3 id="module-project--post-installation">Post-installation</h3>
+<ol>
+  <li>Configure AI provider settings at /admin/config/ai/providers</li>
+  <li>Configure and order sentiments at /admin/config/analyze/sentiment</li>
+  <li>Enable/disable the analyzer per content type at /admin/config/content/analyze-settings</li>
+  <li>Enable/disable specific sentiments per content type at /admin/structure/types/manage/{content-type}</li>
+  <li>Configure permissions at /admin/people/permissions#module-analyze_ai_sentiment</li>
+  <li>Access sentiment analysis through the Analyze tab on content</li>
+</ol>
+
+<h3 id="module-project--additional-requirements">Additional requirements</h3>
+<p>
+  This module requires:
+  <ul>
+    <li><a href="https://www.drupal.org/project/analyze">Analyze</a> module</li>
+    <li><a href="https://www.drupal.org/project/ai">AI</a> module with a configured provider</li>
+    <li><a href="https://www.drupal.org/project/views_color_scales">Views Color Scales</a> module (provides colored tables for report page)</li>
+  </ul>
+</p>

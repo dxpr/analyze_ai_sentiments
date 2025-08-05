@@ -8,7 +8,7 @@
 
 ## INTRODUCTION
 
-The Analyze AI Sentiment module provides AI-powered text analysis capabilities
+The AI Sentiment Analysis module provides AI-powered text analysis capabilities
 for Drupal content, measuring various aspects like trust, objectivity,
 audience targeting, and reading levels.
 
@@ -42,7 +42,7 @@ This module requires the following modules:
    ```composer require "drupal/analyze_ai_sentiment"```
    Otherwise, copy the module to your Drupal installation's modules directory.
 
-2. Enable the 'Analyze AI Sentiment' module in 'Extend'.
+2. Enable the 'AI Sentiment Analysis' module in 'Extend'.
    (/admin/modules)
 
 3. Configure permissions for content analysis.
