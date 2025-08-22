@@ -20,7 +20,7 @@ final class SentimentsBatchService {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly SentimentstorageService $storage,
+    private readonly SentimentsStorageService $storage,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EntityTypeBundleInfoInterface $bundleInfo,
     private readonly DefaultPluginManager $analyzePluginManager,
