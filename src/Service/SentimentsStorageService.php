@@ -15,7 +15,7 @@ use Drupal\Component\Datetime\TimeInterface;
 /**
  * Service for storing and retrieving sentiments analysis results.
  */
-final class SentimentstorageService {
+final class SentimentsStorageService {
   use DependencySerializationTrait;
 
   public function __construct(

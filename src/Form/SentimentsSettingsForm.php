@@ -7,32 +7,32 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
-use Drupal\analyze_ai_sentiments\Service\SentimentstorageService;
+use Drupal\analyze_ai_sentiments\Service\SentimentsStorageService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure sentiments analysis settings.
  */
-class SentimentsettingsForm extends ConfigFormBase {
+class SentimentsSettingsForm extends ConfigFormBase {
   /**
    * The sentiments storage service.
    */
-  protected SentimentstorageService $sentimentstorage;
+  protected SentimentsStorageService $sentimentstorage;
 
   /**
-   * Constructs a SentimentsettingsForm object.
+   * Constructs a SentimentsSettingsForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
    * @param \Drupal\Core\Config\TypedConfigManagerInterface $typed_config_manager
    *   The typed config manager.
-   * @param \Drupal\analyze_ai_sentiments\Service\SentimentstorageService $sentiments_storage
+   * @param \Drupal\analyze_ai_sentiments\Service\SentimentsStorageService $sentiments_storage
    *   The sentiments storage service.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typed_config_manager,
-    SentimentstorageService $sentiments_storage,
+    SentimentsStorageService $sentiments_storage,
   ) {
     parent::__construct($config_factory, $typed_config_manager);
     $this->sentimentstorage = $sentiments_storage;

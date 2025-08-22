@@ -1,7 +1,7 @@
 analyze_ai_sentiments.settings:
   path: '/admin/config/analyze/sentiments'
   defaults:
-    _form: '\Drupal\analyze_ai_sentiments\Form\SentimentsettingsForm'
+    _form: '\Drupal\analyze_ai_sentiments\Form\SentimentsSettingsForm'
     _title: 'Sentiments Analysis Settings'
   requirements:
     _permission: 'administer site configuration'

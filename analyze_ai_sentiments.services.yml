@@ -1,6 +1,6 @@
 services:
   analyze_ai_sentiments.storage:
-    class: Drupal\analyze_ai_sentiments\Service\SentimentstorageService
+    class: Drupal\analyze_ai_sentiments\Service\SentimentsStorageService
     arguments: ['@database', '@config.factory', '@entity_type.manager', '@renderer', '@datetime.time']
 
   analyze_ai_sentiments.batch_service:

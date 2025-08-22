@@ -15,7 +15,7 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface;
 use Drupal\Core\Link;
-use Drupal\analyze_ai_sentiments\Service\SentimentstorageService;
+use Drupal\analyze_ai_sentiments\Service\SentimentsStorageService;
 
 /**
  * A sentiments analyzer that uses AI to analyze content sentiments.
@@ -58,9 +58,9 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
   /**
    * The sentiments storage service.
    *
-   * @var \Drupal\analyze_ai_sentiments\Service\SentimentstorageService
+   * @var \Drupal\analyze_ai_sentiments\Service\SentimentsStorageService
    */
-  protected SentimentstorageService $storage;
+  protected SentimentsStorageService $storage;
 
   /**
    * Creates the plugin.
@@ -89,7 +89,7 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
    *   The messenger service.
    * @param \Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface $promptJsonDecoder
    *   The prompt JSON decoder service.
-   * @param \Drupal\analyze_ai_sentiments\Service\SentimentstorageService $storage
+   * @param \Drupal\analyze_ai_sentiments\Service\SentimentsStorageService $storage
    *   The sentiments storage service.
    */
   public function __construct(
@@ -105,7 +105,7 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
     protected LanguageManagerInterface $languageManager,
     MessengerInterface $messenger,
     PromptJsonDecoderInterface $promptJsonDecoder,
-    SentimentstorageService $storage,
+    SentimentsStorageService $storage,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $helper, $currentUser);
     $this->aiProvider = $aiProvider;
@@ -156,7 +156,7 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
     if (empty($sentiments)) {
       // Load defaults from the settings form.
       $form = \Drupal::classResolver()
-        ->getInstanceFromDefinition('\Drupal\analyze_ai_sentiments\Form\SentimentsettingsForm');
+        ->getInstanceFromDefinition('\Drupal\analyze_ai_sentiments\Form\SentimentsSettingsForm');
       return $form->getDefaultSentiments();
     }
 
