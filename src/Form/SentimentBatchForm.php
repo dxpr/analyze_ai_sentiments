@@ -2,37 +2,38 @@
 
 declare(strict_types=1);
 
-namespace Drupal\analyze_ai_sentiment\Form;
+namespace Drupal\analyze_ai_sentiments\Form;
 
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\analyze_ai_sentiment\Service\SentimentBatchService;
+use Drupal\analyze_ai_sentiments\Service\SentimentsBatchService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Batch form for sentiment analysis.
+ * Batch form for sentiments analysis.
  */
-final class SentimentBatchForm extends FormBase {
+final class SentimentsBatchForm extends FormBase {
 
   public function __construct(
-    private readonly SentimentBatchService $batchService,
-  ) {}
+    private readonly SentimentsBatchService $batchService,
+  ) {
+  }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('analyze_ai_sentiment.batch_service'),
-    );
+          $container->get('analyze_ai_sentiments.batch_service'),
+      );
   }
 
   /**
    * {@inheritdoc}
    */
   public function getFormId(): string {
-    return 'analyze_ai_sentiment_batch';
+    return 'analyze_ai_sentiments_batch';
   }
 
   /**
@@ -40,7 +41,7 @@ final class SentimentBatchForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['description'] = [
-      '#markup' => $this->t('<p>Analyze content for sentiment metrics. Results are cached to improve performance. Only published content will be analyzed.</p>'),
+      '#markup' => $this->t('<p>Analyze content for sentiments metrics. Results are cached to improve performance. Only published content will be analyzed.</p>'),
     ];
 
     $available_bundles = $this->batchService->getAvailableEntityBundles();
@@ -48,7 +49,7 @@ final class SentimentBatchForm extends FormBase {
     if (empty($available_bundles)) {
       $configure_url = Url::fromRoute('analyze.analyze_settings');
       $form['no_bundles'] = [
-        '#markup' => $this->t('<p>No content types have sentiment analysis enabled. Please <a href="@url">configure the Analyze module</a> first.</p>', [
+        '#markup' => $this->t('<p>No content types have sentiments analysis enabled. Please <a href="@url">configure the Analyze module</a> first.</p>', [
           '@url' => $configure_url->toString(),
         ]),
       ];
@@ -58,7 +59,7 @@ final class SentimentBatchForm extends FormBase {
     $form['entity_types'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Content Types'),
-      '#description' => $this->t('Select which content types to analyze for sentiment.'),
+      '#description' => $this->t('Select which content types to analyze for sentiments.'),
       '#options' => $available_bundles,
       '#required' => TRUE,
     ];
@@ -82,7 +83,7 @@ final class SentimentBatchForm extends FormBase {
       '#type' => 'actions',
       'submit' => [
         '#type' => 'submit',
-        '#value' => $this->t('Start Sentiment Analysis'),
+        '#value' => $this->t('Start Sentiments Analysis'),
         '#button_type' => 'primary',
       ],
     ];
@@ -98,10 +99,10 @@ final class SentimentBatchForm extends FormBase {
     $selected_types = array_filter($values['entity_types']);
 
     $entities = $this->batchService->getEntitiesForAnalysis(
-      $selected_types,
-      (bool) $values['force_refresh'],
-      (int) $values['limit']
-    );
+          $selected_types,
+          (bool) $values['force_refresh'],
+          (int) $values['limit']
+      );
 
     if (empty($entities)) {
       $this->messenger()->addWarning($this->t('No entities found for analysis.'));
@@ -110,7 +111,7 @@ final class SentimentBatchForm extends FormBase {
 
     $total_entities = count($entities);
     $batch = [
-      'title' => $this->t('Analyzing @count entities for sentiment', ['@count' => $total_entities]),
+      'title' => $this->t('Analyzing @count entities for sentiments', ['@count' => $total_entities]),
       'operations' => [],
       'finished' => [static::class, 'batchFinished'],
       'progressive' => TRUE,
@@ -142,11 +143,11 @@ final class SentimentBatchForm extends FormBase {
     if ($success) {
       $processed = $results['processed'] ?? 0;
       \Drupal::messenger()->addStatus(\Drupal::translation()->formatPlural(
-        $processed,
-        'Successfully analyzed @count entity for sentiment.',
-        'Successfully analyzed @count entities for sentiment.',
-        ['@count' => $processed]
-      ));
+            $processed,
+            'Successfully analyzed @count entity for sentiments.',
+            'Successfully analyzed @count entities for sentiments.',
+            ['@count' => $processed]
+        ));
 
       if (!empty($results['errors'])) {
         foreach ($results['errors'] as $error) {
@@ -155,7 +156,7 @@ final class SentimentBatchForm extends FormBase {
       }
     }
     else {
-      \Drupal::messenger()->addError(t('Sentiment analysis batch processing failed.'));
+      \Drupal::messenger()->addError(t('Sentiments analysis batch processing failed.'));
     }
   }
 

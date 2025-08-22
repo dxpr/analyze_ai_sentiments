@@ -1,6 +1,6 @@
 {
-    "name": "drupal/analyze_ai_sentiment",
-    "description": "Analyzes content for sentiment and other metrics using AI.",
+    "name": "drupal/analyze_ai_sentiments",
+    "description": "Analyzes content for sentiments and other metrics using AI.",
     "type": "drupal-module",
     "license": "GPL-2.0-or-later",
     "require": {

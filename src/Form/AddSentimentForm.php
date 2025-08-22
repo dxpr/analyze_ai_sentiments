@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\analyze_ai_sentiment\Form;
+namespace Drupal\analyze_ai_sentiments\Form;
 
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormBase;
@@ -9,10 +9,9 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Form for adding a new sentiment.
+ * Form for adding a new sentiments.
  */
-class AddSentimentForm extends FormBase {
-
+class AddSentimentsForm extends FormBase {
   /**
    * The config factory.
    *
@@ -21,7 +20,7 @@ class AddSentimentForm extends FormBase {
   protected $configFactory;
 
   /**
-   * Constructs a new AddSentimentForm.
+   * Constructs a new AddSentimentsForm.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
@@ -35,28 +34,28 @@ class AddSentimentForm extends FormBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('config.factory')
-    );
+          $container->get('config.factory')
+      );
   }
 
   /**
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'analyze_ai_sentiment_add_sentiment';
+    return 'analyze_ai_sentiments_add_sentiments';
   }
 
   /**
-   * Check if a sentiment ID already exists.
+   * Check if a sentiments ID already exists.
    *
    * @param string $id
-   *   The sentiment ID to check.
+   *   The sentiments ID to check.
    *
    * @return bool
-   *   TRUE if the sentiment exists, FALSE otherwise.
+   *   TRUE if the sentiments exists, FALSE otherwise.
    */
-  public function sentimentExists($id) {
-    $config = $this->configFactory->get('analyze_ai_sentiment.settings');
+  public function sentimentsExists($id) {
+    $config = $this->configFactory->get('analyze_ai_sentiments.settings');
     $sentiments = $config->get('sentiments') ?: [];
     return isset($sentiments[$id]);
   }
@@ -69,20 +68,20 @@ class AddSentimentForm extends FormBase {
     $form['description'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
-      '#value' => $this->t('Add a new sentiment metric to analyze content. Each sentiment has a scale from -1.0 to +1.0 with customizable labels for the minimum, middle, and maximum values.'),
+      '#value' => $this->t('Add a new sentiments metric to analyze content. Each sentiments has a scale from -1.0 to +1.0 with customizable labels for the minimum, middle, and maximum values.'),
     ];
 
     $form['basic'] = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['sentiment-basic-info']],
+      '#attributes' => ['class' => ['sentiments-basic-info']],
     ];
 
     $form['basic']['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
       '#required' => TRUE,
-      '#description' => $this->t('The human-readable name for this sentiment metric.'),
-      '#placeholder' => $this->t('e.g., Content Sentiment'),
+      '#description' => $this->t('The human-readable name for this sentiments metric.'),
+      '#placeholder' => $this->t('e.g., Content Sentiments'),
       '#maxlength' => 255,
     ];
 
@@ -92,7 +91,7 @@ class AddSentimentForm extends FormBase {
       '#required' => TRUE,
       '#description' => $this->t('A unique machine-readable name. Can only contain lowercase letters, numbers, and underscores.'),
       '#machine_name' => [
-        'exists' => [$this, 'sentimentExists'],
+        'exists' => [$this, 'sentimentsExists'],
         'source' => ['basic', 'label'],
       ],
     ];
@@ -100,7 +99,7 @@ class AddSentimentForm extends FormBase {
     $form['labels'] = [
       '#type' => 'details',
       '#title' => $this->t('Scale Labels'),
-      '#description' => $this->t('Define labels for the sentiment scale endpoints and midpoint.'),
+      '#description' => $this->t('Define labels for the sentiments scale endpoints and midpoint.'),
       '#open' => TRUE,
     ];
 
@@ -130,19 +129,19 @@ class AddSentimentForm extends FormBase {
 
     $form['actions'] = [
       '#type' => 'actions',
-      '#attributes' => ['class' => ['sentiment-form-actions']],
+      '#attributes' => ['class' => ['sentiments-form-actions']],
     ];
 
     $form['actions']['submit'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Add Sentiment'),
+      '#value' => $this->t('Add Sentiments'),
       '#button_type' => 'primary',
     ];
 
     $form['actions']['cancel'] = [
       '#type' => 'link',
       '#title' => $this->t('Cancel'),
-      '#url' => Url::fromRoute('analyze_ai_sentiment.settings'),
+      '#url' => Url::fromRoute('analyze_ai_sentiments.settings'),
       '#attributes' => [
         'class' => ['button', 'dialog-cancel'],
         'role' => 'button',
@@ -157,13 +156,13 @@ class AddSentimentForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     /** @var array<string, mixed> $form */
-    $config = $this->configFactory->getEditable('analyze_ai_sentiment.settings');
+    $config = $this->configFactory->getEditable('analyze_ai_sentiments.settings');
     $sentiments = $config->get('sentiments') ?: [];
 
     // Get the maximum weight and add 1.
     $max_weight = 0;
-    foreach ($sentiments as $sentiment) {
-      $max_weight = max($max_weight, $sentiment['weight'] ?? 0);
+    foreach ($sentiments as $sentiments) {
+      $max_weight = max($max_weight, $sentiments['weight'] ?? 0);
     }
 
     $values = $form_state->getValues();
@@ -177,8 +176,8 @@ class AddSentimentForm extends FormBase {
     ];
 
     $config->set('sentiments', $sentiments)->save();
-    $this->messenger()->addStatus($this->t('Added new sentiment %label.', ['%label' => $values['label']]));
-    $form_state->setRedirectUrl(Url::fromRoute('analyze_ai_sentiment.settings'));
+    $this->messenger()->addStatus($this->t('Added new sentiments %label.', ['%label' => $values['label']]));
+    $form_state->setRedirectUrl(Url::fromRoute('analyze_ai_sentiments.settings'));
   }
 
 }

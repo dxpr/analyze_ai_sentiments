@@ -5,17 +5,17 @@ dependencies:
   config:
     - system.menu.admin
   module:
-    - analyze_ai_sentiment
+    - analyze_ai_sentiments
     - node
     - views_color_scales
 _core:
   default_config_hash: N0NS4fONEuTHqrzhxLvORys7CNEVqlCaEY5Q8g-urs4
-id: ai_sentiment_analysis_results
-label: 'AI Sentiment Analysis'
+id: ai_sentiments_analysis_results
+label: 'AI Sentiments Analysis'
 module: views
 description: ''
 tag: ''
-base_table: analyze_ai_sentiment_results
+base_table: analyze_ai_sentiments_results
 base_field: id
 display:
   default:
@@ -24,7 +24,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: 'Sentiment Analysis Results'
+      title: 'Sentiments Analysis Results'
       fields:
         title:
           id: title
@@ -91,15 +91,15 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        sentiment_id:
-          id: sentiment_id
-          table: analyze_ai_sentiment_results
-          field: sentiment_id
+        sentiments_id:
+          id: sentiments_id
+          table: analyze_ai_sentiments_results
+          field: sentiments_id
           relationship: none
           group_type: group
           admin_label: ''
           plugin_id: standard
-          label: 'Sentiment Type'
+          label: 'Sentiments Type'
           exclude: false
           alter:
             alter_text: false
@@ -142,13 +142,13 @@ display:
           hide_alter_empty: true
         score:
           id: score
-          table: analyze_ai_sentiment_results
+          table: analyze_ai_sentiments_results
           field: score
           relationship: none
           group_type: group
           admin_label: ''
           plugin_id: numeric
-          label: 'Sentiment Score'
+          label: 'Sentiments Score'
           exclude: false
           alter:
             alter_text: false
@@ -465,10 +465,10 @@ display:
           granularity: second
       arguments: {  }
       filters:
-        sentiment_id:
-          id: sentiment_id
-          table: analyze_ai_sentiment_results
-          field: sentiment_id
+        sentiments_id:
+          id: sentiments_id
+          table: analyze_ai_sentiments_results
+          field: sentiments_id
           relationship: none
           group_type: group
           admin_label: ''
@@ -478,14 +478,14 @@ display:
           group: 1
           exposed: true
           expose:
-            operator_id: sentiment_id_op
-            label: 'Sentiment Type'
+            operator_id: sentiments_id_op
+            label: 'Sentiments Type'
             description: ''
             use_operator: false
-            operator: sentiment_id_op
+            operator: sentiments_id_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: sentiment_id
+            identifier: sentiments_id
             required: false
             remember: false
             multiple: false
@@ -513,9 +513,9 @@ display:
             placeholder: ''
           is_grouped: false
           group_info:
-            label: 'Sentiment Type'
+            label: 'Sentiments Type'
             description: ''
-            identifier: sentiment_id
+            identifier: sentiments_id
             optional: true
             widget: select
             multiple: false
@@ -537,7 +537,7 @@ display:
                 value: ''
         score:
           id: score
-          table: analyze_ai_sentiment_results
+          table: analyze_ai_sentiments_results
           field: score
           relationship: none
           group_type: group
@@ -552,7 +552,7 @@ display:
           exposed: true
           expose:
             operator_id: score_op
-            label: 'Sentiment Score'
+            label: 'Sentiments Score'
             description: ''
             use_operator: true
             operator: score_op
@@ -670,7 +670,7 @@ display:
           default_row_class: true
           columns:
             title: title
-            sentiment_id: sentiment_id
+            sentiments_id: sentiments_id
             score: score
             type: type
             changed: changed
@@ -684,7 +684,7 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
-            sentiment_id:
+            sentiments_id:
               sortable: true
               default_sort_order: asc
               align: ''
@@ -743,7 +743,7 @@ display:
       relationships:
         entity_id:
           id: entity_id
-          table: analyze_ai_sentiment_results
+          table: analyze_ai_sentiments_results
           field: entity_id
           relationship: none
           group_type: group
@@ -769,11 +769,11 @@ display:
     display_options:
       display_description: ''
       display_extenders: {  }
-      path: admin/reports/sentiment-analysis
+      path: admin/reports/sentiments-analysis
       menu:
         type: normal
-        title: 'AI Sentiment Analysis'
-        description: 'View detailed sentiment scores and content analysis metrics for all analyzed entities.'
+        title: 'AI Sentiments Analysis'
+        description: 'View detailed sentiments scores and content analysis metrics for all analyzed entities.'
         weight: -1
         expanded: true
         menu_name: admin

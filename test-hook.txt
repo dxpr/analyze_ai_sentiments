@@ -1,2 +1,0 @@
-This file is for testing the pre-commit hook.
-It should trigger the Drupal lint checks.

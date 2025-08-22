@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\analyze_ai_sentiment\Service;
+namespace Drupal\analyze_ai_sentiments\Service;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -12,23 +12,23 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 
 /**
- * Service for batch processing sentiment analysis.
+ * Service for batch processing sentiments analysis.
  */
-final class SentimentBatchService {
-
+final class SentimentsBatchService {
   use StringTranslationTrait;
   use DependencySerializationTrait;
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly SentimentStorageService $storage,
+    private readonly SentimentstorageService $storage,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EntityTypeBundleInfoInterface $bundleInfo,
     private readonly DefaultPluginManager $analyzePluginManager,
-  ) {}
+  ) {
+  }
 
   /**
-   * Gets entities that need sentiment analysis.
+   * Gets entities that need sentiments analysis.
    *
    * @param array<string> $entity_bundles
    *   Array of entity_type:bundle strings.
@@ -87,7 +87,7 @@ final class SentimentBatchService {
   }
 
   /**
-   * Processes a batch of entities for sentiment analysis.
+   * Processes a batch of entities for sentiments analysis.
    *
    * @param array<array<string, string>> $entities
    *   Array of entity info.
@@ -107,7 +107,7 @@ final class SentimentBatchService {
 
     try {
       $analyzer = $this->analyzePluginManager
-        ->createInstance('ai_sentiment_analyzer');
+        ->createInstance('ai_sentiments_analyzer');
 
       foreach ($entities as $entity_data) {
         try {
@@ -135,7 +135,6 @@ final class SentimentBatchService {
             '@message' => $e->getMessage(),
           ])->render();
         }
-
       }
     }
     catch (\Exception $e) {
@@ -159,7 +158,7 @@ final class SentimentBatchService {
   }
 
   /**
-   * Gets available entity bundles that have sentiment analysis enabled.
+   * Gets available entity bundles that have sentiments analysis enabled.
    *
    * @return array<string, string>
    *   Array of entity_type:bundle => label pairs.
@@ -171,7 +170,7 @@ final class SentimentBatchService {
     $options = [];
     foreach ($status as $entity_type_id => $bundles) {
       foreach ($bundles as $bundle => $analyzers) {
-        if (isset($analyzers['analyze_ai_sentiment_analyzer'])) {
+        if (isset($analyzers['analyze_ai_sentiments_analyzer'])) {
           $bundle_info = $this->bundleInfo->getBundleInfo($entity_type_id);
           $label = $bundle_info[$bundle]['label'] ?? $bundle;
           $options["{$entity_type_id}:{$bundle}"] = "{$entity_type_id} - {$label}";

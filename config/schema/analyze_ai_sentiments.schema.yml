@@ -1,6 +1,6 @@
-analyze_ai_sentiment.settings:
+analyze_ai_sentiments.settings:
   type: config_object
-  label: 'Sentiment Analysis Settings'
+  label: 'Sentiments Analysis Settings'
   mapping:
     sentiments:
       type: sequence
@@ -27,9 +27,9 @@ analyze_ai_sentiment.settings:
             type: integer
             label: 'Weight'
 
-analyze_ai_sentiment.entity_settings:
+analyze_ai_sentiments.entity_settings:
   type: config_object
-  label: 'Entity-specific Sentiment Settings'
+  label: 'Entity-specific Sentiments Settings'
   mapping:
     '*':
       type: mapping
@@ -37,18 +37,18 @@ analyze_ai_sentiment.entity_settings:
       mapping:
         '*':
           type: boolean
-          label: 'Sentiment Enabled'
+          label: 'Sentiments Enabled'
 
-analyze.entity_settings.*.analyzers.ai_sentiment_analyzer.settings:
+analyze.entity_settings.*.analyzers.ai_sentiments_analyzer.settings:
   type: mapping
-  label: 'Sentiment Analyzer Settings'
+  label: 'Sentiments Analyzer Settings'
   mapping:
     sentiments:
       type: sequence
       label: 'Enabled Sentiments'
       sequence:
         type: boolean
-        label: 'Sentiment Enabled'
+        label: 'Sentiments Enabled'
 
 analyze.plugin_settings.*.*.*:
   type: mapping
@@ -56,7 +56,7 @@ analyze.plugin_settings.*.*.*:
   mapping:
     sentiments:
       type: sequence
-      label: 'Sentiment Settings'
+      label: 'Sentiments Settings'
       sequence:
         type: boolean
-        label: 'Sentiment Enabled' 
+        label: 'Sentiments Enabled' 

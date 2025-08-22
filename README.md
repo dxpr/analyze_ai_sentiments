@@ -1,12 +1,15 @@
-# AI Sentiment Analysis
+# AI Sentiments Analysis
 
-AI-powered multi-dimensional text analysis measuring trust, objectivity, audience targeting, and reading levels.
+AI-powered multi-dimensional text analysis measuring trust, objectivity, audience
+targeting, and reading levels.
 
 ## Features
 
-- **Four Analysis Dimensions**: Trust & Credibility, Objectivity & Bias, Audience Vibe Check, CEFR Reading Level
-- **Flexible Configuration**: Add, remove, reorder sentiment dimensions via UI
-- **Content Type Control**: Enable/disable specific analysis types per content type
+- **Four Analysis Dimensions**: Trust & Credibility, Objectivity & Bias, Audience
+  Vibe Check, CEFR Reading Level
+- **Flexible Configuration**: Add, remove, reorder sentiments dimensions via UI
+- **Content Type Control**: Enable/disable specific analysis types per content
+  type
 - **Visual Feedback**: Gauge displays with clear progression indicators
 - **Analyze Framework Integration**: Consistent reporting across analysis tools
 
@@ -18,29 +21,30 @@ AI-powered multi-dimensional text analysis measuring trust, objectivity, audienc
 ## Installation
 
 ```bash
-composer require drupal/analyze_ai_sentiment
-drush en analyze_ai_sentiment
+composer require drupal/analyze_ai_sentiments
+drush en analyze_ai_sentiments
 ```
 
 ## Configuration
 
 ### Basic Setup
 1. Configure AI provider at `/admin/config/ai/providers`
-2. Configure sentiment dimensions at `/admin/config/analyze/sentiment`
+2. Configure sentiments dimensions at `/admin/config/analyze/sentiments`
 3. Enable per content type at `/admin/config/content/analyze-settings`
-4. Configure permissions at `/admin/people/permissions#module-analyze_ai_sentiment`
+4. Configure permissions at
+   `/admin/people/permissions#module-analyze_ai_sentiments`
 
 ### Content Type Configuration
 Two configuration methods:
 
 #### Per Content Type Settings
 - Go to `/admin/structure/types/manage/{content-type}`
-- Find "Sentiment Analysis" vertical tab
+- Find "Sentiments Analysis" vertical tab
 - Enable/disable specific sentiments for this content type
 
 #### Global Analyze Settings
 - Go to `/admin/config/content/analyze-settings`
-- Find "AI Sentiment Analysis" section
+- Find "AI Sentiments Analysis" section
 - Enable/disable analyzer for specific content types
 
 ## Analysis Dimensions

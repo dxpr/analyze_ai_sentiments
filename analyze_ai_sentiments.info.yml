@@ -1,0 +1,10 @@
+name: 'Analyze AI Sentiments'
+type: module
+description: 'A submodule for Analyze that provides AI-powered sentiments analysis capabilities.'
+package: Analyze
+core_version_requirement: ^10.2 || ^11
+dependencies:
+  - analyze:analyze
+  - views_color_scales:views_color_scales
+  - ai:ai
+configure: analyze_ai_sentiments.settings 

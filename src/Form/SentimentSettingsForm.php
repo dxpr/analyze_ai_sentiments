@@ -1,42 +1,41 @@
 <?php
 
-namespace Drupal\analyze_ai_sentiment\Form;
+namespace Drupal\analyze_ai_sentiments\Form;
 
 use Drupal\Core\Url;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
-use Drupal\analyze_ai_sentiment\Service\SentimentStorageService;
+use Drupal\analyze_ai_sentiments\Service\SentimentstorageService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Configure sentiment analysis settings.
+ * Configure sentiments analysis settings.
  */
-class SentimentSettingsForm extends ConfigFormBase {
-
+class SentimentsettingsForm extends ConfigFormBase {
   /**
-   * The sentiment storage service.
+   * The sentiments storage service.
    */
-  protected SentimentStorageService $sentimentStorage;
+  protected SentimentstorageService $sentimentstorage;
 
   /**
-   * Constructs a SentimentSettingsForm object.
+   * Constructs a SentimentsettingsForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
    * @param \Drupal\Core\Config\TypedConfigManagerInterface $typed_config_manager
    *   The typed config manager.
-   * @param \Drupal\analyze_ai_sentiment\Service\SentimentStorageService $sentiment_storage
-   *   The sentiment storage service.
+   * @param \Drupal\analyze_ai_sentiments\Service\SentimentstorageService $sentiments_storage
+   *   The sentiments storage service.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typed_config_manager,
-    SentimentStorageService $sentiment_storage,
+    SentimentstorageService $sentiments_storage,
   ) {
     parent::__construct($config_factory, $typed_config_manager);
-    $this->sentimentStorage = $sentiment_storage;
+    $this->sentimentstorage = $sentiments_storage;
   }
 
   /**
@@ -44,17 +43,17 @@ class SentimentSettingsForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('config.factory'),
-      $container->get('config.typed'),
-      $container->get('analyze_ai_sentiment.storage')
-    );
+          $container->get('config.factory'),
+          $container->get('config.typed'),
+          $container->get('analyze_ai_sentiments.storage')
+      );
   }
 
   /**
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'analyze_ai_sentiment_settings';
+    return 'analyze_ai_sentiments_settings';
   }
 
   /**
@@ -62,19 +61,19 @@ class SentimentSettingsForm extends ConfigFormBase {
    */
   protected function getEditableConfigNames(): array {
     /** @var array<string> */
-    return ['analyze_ai_sentiment.settings'];
+    return ['analyze_ai_sentiments.settings'];
   }
 
   /**
-   * Gets the default sentiment configurations.
+   * Gets the default sentiments configurations.
    *
    * @return array<string, array<string, mixed>>
-   *   Array of default sentiment configurations.
+   *   Array of default sentiments configurations.
    */
   public function getDefaultSentiments(): array {
     return [
-      'sentiment' => [
-        'label' => $this->t('Overall Sentiment'),
+      'sentiments' => [
+        'label' => $this->t('Overall Sentiments'),
         'min_label' => $this->t('Negative'),
         'mid_label' => $this->t('Neutral'),
         'max_label' => $this->t('Positive'),
@@ -116,49 +115,49 @@ class SentimentSettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     /** @var array<string, mixed> $form */
-    $config = $this->config('analyze_ai_sentiment.settings');
+    $config = $this->config('analyze_ai_sentiments.settings');
     $sentiments = $config->get('sentiments') ?: $this->getDefaultSentiments();
 
     $form['description'] = [
       '#type' => 'html_tag',
       '#tag' => 'div',
-      '#attributes' => ['class' => ['sentiment-description']],
+      '#attributes' => ['class' => ['sentiments-description']],
       'content' => [
         '#type' => 'html_tag',
         '#tag' => 'p',
-        '#value' => $this->t('Configure the sentiment metrics used to analyze content. Each sentiment has a scale from -1.0 to +1.0 with customizable labels.'),
+        '#value' => $this->t('Configure the sentiments metrics used to analyze content. Each sentiments has a scale from -1.0 to +1.0 with customizable labels.'),
       ],
     ];
 
     $form['table'] = [
       '#type' => 'container',
-      '#attributes' => ['class' => ['sentiment-table-container']],
+      '#attributes' => ['class' => ['sentiments-table-container']],
     ];
 
     $form['table']['sentiments'] = [
       '#type' => 'table',
       '#header' => [
-        $this->t('Sentiment'),
+        $this->t('Sentiments'),
         $this->t('Labels'),
         $this->t('Weight'),
         $this->t('Operations'),
       ],
       '#tabledrag' => [
-        [
-          'action' => 'order',
-          'relationship' => 'sibling',
-          'group' => 'sentiment-weight',
-        ],
+      [
+        'action' => 'order',
+        'relationship' => 'sibling',
+        'group' => 'sentiments-weight',
+      ],
       ],
     ];
 
     // Sort sentiments by weight.
     uasort($sentiments, function ($a, $b) {
-      return ($a['weight'] ?? 0) <=> ($b['weight'] ?? 0);
+        return ($a['weight'] ?? 0) <=> ($b['weight'] ?? 0);
     });
 
     // Add existing sentiments to the table.
-    foreach ($sentiments as $id => $sentiment) {
+    foreach ($sentiments as $id => $sentiments) {
       $form['table']['sentiments'][$id] = [
         '#attributes' => [
           'class' => ['draggable'],
@@ -167,7 +166,7 @@ class SentimentSettingsForm extends ConfigFormBase {
           '#type' => 'textfield',
           '#title' => $this->t('Label'),
           '#title_display' => 'invisible',
-          '#default_value' => $sentiment['label'],
+          '#default_value' => $sentiments['label'],
           '#required' => TRUE,
         ],
         'labels' => [
@@ -176,19 +175,19 @@ class SentimentSettingsForm extends ConfigFormBase {
           'min_label' => [
             '#type' => 'textfield',
             '#title' => $this->t('Minimum'),
-            '#default_value' => $sentiment['min_label'],
+            '#default_value' => $sentiments['min_label'],
             '#required' => TRUE,
           ],
           'mid_label' => [
             '#type' => 'textfield',
             '#title' => $this->t('Middle'),
-            '#default_value' => $sentiment['mid_label'],
+            '#default_value' => $sentiments['mid_label'],
             '#required' => TRUE,
           ],
           'max_label' => [
             '#type' => 'textfield',
             '#title' => $this->t('Maximum'),
-            '#default_value' => $sentiment['max_label'],
+            '#default_value' => $sentiments['max_label'],
             '#required' => TRUE,
           ],
         ],
@@ -196,15 +195,15 @@ class SentimentSettingsForm extends ConfigFormBase {
           '#type' => 'weight',
           '#title' => $this->t('Weight'),
           '#title_display' => 'invisible',
-          '#default_value' => $sentiment['weight'],
-          '#attributes' => ['class' => ['sentiment-weight']],
+          '#default_value' => $sentiments['weight'],
+          '#attributes' => ['class' => ['sentiments-weight']],
         ],
         'operations' => [
           '#type' => 'operations',
           '#links' => [
             'delete' => [
               'title' => $this->t('Delete'),
-              'url' => Url::fromRoute('analyze_ai_sentiment.delete_sentiment', ['sentiment_id' => $id]),
+              'url' => Url::fromRoute('analyze_ai_sentiments.delete_sentiments', ['sentiments_id' => $id]),
               'attributes' => [
                 'class' => ['button', 'button--danger', 'button--small'],
               ],
@@ -220,7 +219,7 @@ class SentimentSettingsForm extends ConfigFormBase {
         '#type' => 'html_tag',
         '#tag' => 'p',
         '#value' => $this->t('Drag and drop rows to reorder the sentiments. This order will be reflected in the analysis display.'),
-        '#attributes' => ['class' => ['sentiment-help-text', 'description']],
+        '#attributes' => ['class' => ['sentiments-help-text', 'description']],
         '#weight' => 5,
       ];
     }
@@ -250,13 +249,13 @@ class SentimentSettingsForm extends ConfigFormBase {
       ];
     }
 
-    $this->config('analyze_ai_sentiment.settings')
+    $this->config('analyze_ai_sentiments.settings')
       ->set('sentiments', $sentiments)
       ->save();
 
-    // Invalidate all cached sentiment analysis results since configuration
+    // Invalidate all cached sentiments analysis results since configuration
     // changed.
-    $this->sentimentStorage->invalidateConfigCache();
+    $this->sentimentstorage->invalidateConfigCache();
 
     parent::submitForm($form, $form_state);
   }

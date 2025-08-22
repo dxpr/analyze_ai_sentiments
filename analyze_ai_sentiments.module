@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Analyze AI Sentiments module.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_entity_update().
+ */
+function analyze_ai_sentiments_entity_update(EntityInterface $entity) {
+  if (_analyze_ai_sentiments_is_supported_entity($entity)) {
+    \Drupal::service('analyze_ai_sentiments.storage')->deleteScores($entity);
+  }
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function analyze_ai_sentiments_entity_delete(EntityInterface $entity) {
+  if (_analyze_ai_sentiments_is_supported_entity($entity)) {
+    \Drupal::service('analyze_ai_sentiments.storage')->deleteScores($entity);
+  }
+}
+
+/**
+ * Helper function to check if an entity should be analyzed for sentiments.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The entity to check.
+ *
+ * @return bool
+ *   TRUE if the entity should be analyzed, FALSE otherwise.
+ */
+function _analyze_ai_sentiments_is_supported_entity(EntityInterface $entity): bool {
+  // Check if this entity type/bundle has sentiments analysis enabled.
+  $config = \Drupal::config('analyze.settings');
+  $status = $config->get('status') ?? [];
+
+  $entity_type_id = $entity->getEntityTypeId();
+  $bundle = $entity->bundle();
+
+  return isset($status[$entity_type_id][$bundle]['ai_sentiments_analyzer']);
+}

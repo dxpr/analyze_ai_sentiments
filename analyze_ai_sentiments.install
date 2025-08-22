@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Install, update and uninstall functions for the analyze_ai_sentiment module.
+ * Install, update and uninstall functions for the analyze_ai_sentiments module.
  */
 
 /**
  * Implements hook_schema().
  */
-function analyze_ai_sentiment_schema() {
+function analyze_ai_sentiments_schema() {
   $schema = [];
 
-  $schema['analyze_ai_sentiment_results'] = [
-    'description' => 'Stores AI sentiment analysis results for content entities.',
+  $schema['analyze_ai_sentiments_results'] = [
+    'description' => 'Stores AI sentiments analysis results for content entities.',
     'fields' => [
       'id' => [
         'type' => 'serial',
@@ -43,18 +43,18 @@ function analyze_ai_sentiment_schema() {
         'not null' => TRUE,
         'description' => 'The language code of the analyzed content.',
       ],
-      'sentiment_id' => [
+      'sentiments_id' => [
         'type' => 'varchar',
         'length' => 64,
         'not null' => TRUE,
-        'description' => 'The sentiment metric identifier (e.g., "positivity", "engagement").',
+        'description' => 'The sentiments metric identifier (e.g., "positivity", "engagement").',
       ],
       'score' => [
         'type' => 'numeric',
         'precision' => 3,
         'scale' => 2,
         'not null' => TRUE,
-        'description' => 'The sentiment score (-1.00 to +1.00).',
+        'description' => 'The sentiments score (-1.00 to +1.00).',
       ],
       'content_hash' => [
         'type' => 'varchar',
@@ -66,7 +66,7 @@ function analyze_ai_sentiment_schema() {
         'type' => 'varchar',
         'length' => 32,
         'not null' => TRUE,
-        'description' => 'MD5 hash of the sentiment configuration.',
+        'description' => 'MD5 hash of the sentiments configuration.',
       ],
       'analyzed_timestamp' => [
         'type' => 'int',
@@ -77,11 +77,11 @@ function analyze_ai_sentiment_schema() {
     ],
     'primary key' => ['id'],
     'unique keys' => [
-      'entity_sentiment_lang' => ['entity_type', 'entity_id', 'sentiment_id', 'langcode'],
+      'entity_sentiments_lang' => ['entity_type', 'entity_id', 'sentiments_id', 'langcode'],
     ],
     'indexes' => [
       'content_hash' => ['content_hash'],
-      'sentiment_id' => ['sentiment_id'],
+      'sentiments_id' => ['sentiments_id'],
       'analyzed_timestamp' => ['analyzed_timestamp'],
       'entity_type_bundle' => ['entity_type', 'entity_id'],
     ],
@@ -93,9 +93,9 @@ function analyze_ai_sentiment_schema() {
 /**
  * Implements hook_install().
  */
-function analyze_ai_sentiment_install() {
+function analyze_ai_sentiments_install() {
   // Create tables from schema.
-  $schema = analyze_ai_sentiment_schema();
+  $schema = analyze_ai_sentiments_schema();
   $database = \Drupal::database();
   foreach ($schema as $table_name => $table_spec) {
     if (!$database->schema()->tableExists($table_name)) {
@@ -107,20 +107,20 @@ function analyze_ai_sentiment_install() {
 /**
  * Implements hook_uninstall().
  */
-function analyze_ai_sentiment_uninstall() {
+function analyze_ai_sentiments_uninstall() {
   // Clean up any remaining data if tables exist.
   $database = \Drupal::database();
   $schema = $database->schema();
 
-  if ($schema->tableExists('analyze_ai_sentiment_results')) {
-    $database->delete('analyze_ai_sentiment_results')->execute();
+  if ($schema->tableExists('analyze_ai_sentiments_results')) {
+    $database->delete('analyze_ai_sentiments_results')->execute();
   }
 }
 
 /**
- * Update plugin ID from ai_sentiment_analyzer to analyze_ai_sentiment_analyzer.
+ * Update plugin ID from ai_sentiments_analyzer to analyze_ai_sentiments_analyzer.
  */
-function analyze_ai_sentiment_update_8001() {
+function analyze_ai_sentiments_update_8001() {
   $config_factory = \Drupal::configFactory();
   $config = $config_factory->getEditable('analyze.settings');
   $status = $config->get('status') ?? [];
@@ -129,11 +129,11 @@ function analyze_ai_sentiment_update_8001() {
   // Update plugin IDs in analyze.settings configuration.
   foreach ($status as $entity_type => $bundles) {
     foreach ($bundles as $bundle => $analyzers) {
-      if (isset($analyzers['ai_sentiment_analyzer'])) {
+      if (isset($analyzers['ai_sentiments_analyzer'])) {
         // Copy old setting to new plugin ID.
-        $analyzers['analyze_ai_sentiment_analyzer'] = $analyzers['ai_sentiment_analyzer'];
+        $analyzers['analyze_ai_sentiments_analyzer'] = $analyzers['ai_sentiments_analyzer'];
         // Remove old plugin ID.
-        unset($analyzers['ai_sentiment_analyzer']);
+        unset($analyzers['ai_sentiments_analyzer']);
         // Update the configuration.
         $status[$entity_type][$bundle] = $analyzers;
         $updated = TRUE;
@@ -143,8 +143,8 @@ function analyze_ai_sentiment_update_8001() {
 
   if ($updated) {
     $config->set('status', $status)->save();
-    return t('Updated sentiment analyzer plugin ID from "ai_sentiment_analyzer" to "analyze_ai_sentiment_analyzer" in analyze settings.');
+    return t('Updated sentiments analyzer plugin ID from "ai_sentiments_analyzer" to "analyze_ai_sentiments_analyzer" in analyze settings.');
   }
 
-  return t('No sentiment analyzer settings found to update.');
+  return t('No sentiments analyzer settings found to update.');
 }
