@@ -379,13 +379,6 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
       ],
     ];
 
-    $build['title'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'h2',
-    // @phpstan-ignore-next-line
-      '#value' => $this->t('Sentiments Analysis'),
-    ];
-
     foreach ($enabled_sentiments as $id => $sentiments) {
       if (isset($scores[$id])) {
         // Convert -1 to +1 range to 0 to 1 for gauge.
