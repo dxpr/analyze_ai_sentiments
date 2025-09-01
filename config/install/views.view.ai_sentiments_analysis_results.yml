@@ -440,8 +440,9 @@ display:
           sort_asc_label: Asc
           sort_desc_label: Desc
       access:
-        type: none
-        options: {  }
+        type: perm
+        options:
+          perm: 'view analyze results'
       cache:
         type: tag
         options: {  }
