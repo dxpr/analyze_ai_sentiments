@@ -1,12 +1,12 @@
 # AI Sentiments Analysis
 
-AI-powered multi-dimensional text analysis measuring trust, objectivity, audience
-targeting, and reading levels.
+AI-powered multi-dimensional text analysis measuring trust, objectivity,
+audience targeting, and reading levels.
 
 ## Features
 
-- **Four Analysis Dimensions**: Trust & Credibility, Objectivity & Bias, Audience
-  Vibe Check, CEFR Reading Level
+- **Four Analysis Dimensions**: Trust & Credibility, Objectivity & Bias,
+  Audience Vibe Check, CEFR Reading Level
 - **Flexible Configuration**: Add, remove, reorder sentiments dimensions via UI
 - **Content Type Control**: Enable/disable specific analysis types per content
   type
