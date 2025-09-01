@@ -597,6 +597,7 @@ EOT;
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   Default settings array.
    */
   public function getDefaultSettings(): array {
     $sentiments = $this->getConfiguredSentiments();
