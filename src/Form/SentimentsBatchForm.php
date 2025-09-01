@@ -117,8 +117,8 @@ final class SentimentsBatchForm extends FormBase {
       'progressive' => TRUE,
     ];
 
-    // Process in chunks of 1 to minimize timeout risk for complex AI analysis.
-    $chunks = array_chunk($entities, 1);
+    // Process in chunks of 5 for better performance and memory management.
+    $chunks = array_chunk($entities, 5);
     foreach ($chunks as $chunk) {
       $batch['operations'][] = [
         [$this->batchService, 'processBatch'],
