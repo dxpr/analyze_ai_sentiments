@@ -100,9 +100,14 @@ final class SentimentsBatchService {
    *   Batch context.
    */
   public function processBatch(array $entities, bool $force_refresh, int $total_entities, array &$context): void {
-    if (!isset($context['sandbox']['total_entities'])) {
-      $context['sandbox']['total_entities'] = $total_entities;
+    if (!isset($context['sandbox']['progress'])) {
+      $context['sandbox']['progress'] = 0;
+      $context['sandbox']['max'] = count($entities);
+    }
+    if (!isset($context['results']['processed'])) {
       $context['results']['processed'] = 0;
+      $context['results']['analyzed'] = 0;
+      $context['results']['failed'] = 0;
       $context['results']['errors'] = [];
     }
 
@@ -126,7 +131,7 @@ final class SentimentsBatchService {
             $analyzer->renderSummary($entity);
             ob_end_clean();
 
-            $context['results']['processed']++;
+            $context['results']['analyzed']++;
           }
         }
         catch (\Exception $e) {
@@ -135,6 +140,11 @@ final class SentimentsBatchService {
             '@id' => $entity_data['entity_id'],
             '@message' => $e->getMessage(),
           ])->render();
+          $context['results']['failed']++;
+        }
+        finally {
+          $context['sandbox']['progress']++;
+          $context['results']['processed']++;
         }
       }
     }
@@ -146,7 +156,7 @@ final class SentimentsBatchService {
 
     $context['message'] = $this->t('Processed @current of @max entities...', [
       '@current' => $context['results']['processed'],
-      '@max' => $context['sandbox']['total_entities'],
+      '@max' => $total_entities,
     ])->render();
 
     // Calculate progress based on total entities processed vs total entities.
