@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\analyze_ai_sentiments\Service;
 
+use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
@@ -137,7 +138,7 @@ final class SentimentsBatchService {
         }
       }
     }
-    catch (\Exception $e) {
+    catch (PluginException $e) {
       $context['results']['errors'][] = $this->t('Batch processing error: @message', [
         '@message' => $e->getMessage(),
       ])->render();
