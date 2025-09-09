@@ -109,6 +109,9 @@ final class SentimentsBatchForm extends FormBase {
       return;
     }
 
+    $limit = (int) $values['limit'];
+    $entities = $limit > 0 ? 
+      array_slice($entities, 0, $limit) : $entities;
     $total_entities = count($entities);
     $batch = [
       'title' => $this->t('Analyzing @count entities for sentiments', ['@count' => $total_entities]),
