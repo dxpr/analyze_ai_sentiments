@@ -70,6 +70,15 @@ final class SentimentsBatchForm extends FormBase {
       '#description' => $this->t('Re-analyze content even if recent results exist. This will replace all cached results.'),
     ];
 
+    $form['chunk_size'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Chunk Size'),
+      '#description' => $this->t('Number of entities to process in each batch.'),
+      '#default_value' => 5,
+      '#min' => 1,
+      '#max' => 50,
+    ];
+
     $form['limit'] = [
       '#type' => 'number',
       '#title' => $this->t('Limit'),
@@ -109,6 +118,7 @@ final class SentimentsBatchForm extends FormBase {
       return;
     }
 
+    $chunk_size = (int) $values['chunk_size'];
     $total_entities = count($entities);
     $batch = [
       'title' => $this->t('Analyzing @count entities for sentiments', ['@count' => $total_entities]),
@@ -117,8 +127,8 @@ final class SentimentsBatchForm extends FormBase {
       'progressive' => TRUE,
     ];
 
-    // Process in chunks of 5 for better performance and memory management.
-    $chunks = array_chunk($entities, 5);
+    // Process in chunks of the specified size for better performance and memory management.
+    $chunks = array_chunk($entities, $chunk_size);
     foreach ($chunks as $chunk) {
       $batch['operations'][] = [
         [$this->batchService, 'processBatch'],
