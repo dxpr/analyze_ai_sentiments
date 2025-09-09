@@ -8,7 +8,7 @@ use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
-use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\analyze\AnalyzePluginManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 
@@ -24,7 +24,7 @@ final class SentimentsBatchService {
     private readonly SentimentsStorageService $storage,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EntityTypeBundleInfoInterface $bundleInfo,
-    private readonly DefaultPluginManager $analyzePluginManager,
+    private readonly AnalyzePluginManager $analyzePluginManager,
   ) {
   }
 

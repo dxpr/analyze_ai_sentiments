@@ -118,7 +118,8 @@ function analyze_ai_sentiments_uninstall() {
 }
 
 /**
- * Update plugin ID from ai_sentiments_analyzer to analyze_ai_sentiments_analyzer.
+ * Update plugin ID from ai_sentiments_analyzer to
+ * analyze_ai_sentiments_analyzer.
  */
 function analyze_ai_sentiments_update_8001() {
   $config_factory = \Drupal::configFactory();
