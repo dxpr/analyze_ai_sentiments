@@ -120,7 +120,7 @@ final class SentimentsBatchForm extends FormBase {
 
     $chunk_size = (int) $values['chunk_size'];
     $limit = (int) $values['limit'];
-    $entities = $limit > 0 ? 
+    $entities = $limit > 0 ?
       array_slice($entities, 0, $limit) : $entities;
     $total_entities = count($entities);
     $batch = [
@@ -130,7 +130,7 @@ final class SentimentsBatchForm extends FormBase {
       'progressive' => TRUE,
     ];
 
-    // Process in chunks of the specified size for better performance and memory management.
+    // Process in chunks to avoid timeouts.
     $chunks = array_chunk($entities, $chunk_size);
     foreach ($chunks as $chunk) {
       $batch['operations'][] = [
