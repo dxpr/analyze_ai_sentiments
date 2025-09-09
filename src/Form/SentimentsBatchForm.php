@@ -154,12 +154,19 @@ final class SentimentsBatchForm extends FormBase {
    */
   public static function batchFinished(bool $success, array $results, array $operations): void {
     if ($success) {
-      $processed = $results['processed'] ?? 0;
+      $analyzed = $results['analyzed'] ?? 0;
       \Drupal::messenger()->addStatus(\Drupal::translation()->formatPlural(
-            $processed,
+            $analyzed,
             'Successfully analyzed @count entity for sentiments.',
             'Successfully analyzed @count entities for sentiments.',
-            ['@count' => $processed]
+            ['@count' => $analyzed]
+        ));
+      $failed = $results['failed'] ?? 0;
+      \Drupal::messenger()->addStatus(\Drupal::translation()->formatPlural(
+            $failed,
+            'Failed to analyze @count entity for sentiments.',
+            'Failed to analyze @count entities for sentiments.',
+            ['@count' => $failed]
         ));
 
       if (!empty($results['errors'])) {
