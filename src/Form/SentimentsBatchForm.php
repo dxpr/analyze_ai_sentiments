@@ -162,12 +162,14 @@ final class SentimentsBatchForm extends FormBase {
             ['@count' => $analyzed]
         ));
       $failed = $results['failed'] ?? 0;
-      \Drupal::messenger()->addStatus(\Drupal::translation()->formatPlural(
-            $failed,
-            'Failed to analyze @count entity for sentiments.',
-            'Failed to analyze @count entities for sentiments.',
-            ['@count' => $failed]
-        ));
+      if ($failed > 0) {
+        \Drupal::messenger()->addStatus(\Drupal::translation()->formatPlural(
+              $failed,
+              'Failed to analyze @count entity for sentiments.',
+              'Failed to analyze @count entities for sentiments.',
+              ['@count' => $failed]
+          ));
+      }
 
       if (!empty($results['errors'])) {
         foreach ($results['errors'] as $error) {
