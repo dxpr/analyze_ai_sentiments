@@ -7,9 +7,6 @@
 
 /**
  * Implements hook_schema().
- *
- * @return array<string, mixed>
- *   Schema array.
  */
 function analyze_ai_sentiments_schema(): array {
   $schema = [];

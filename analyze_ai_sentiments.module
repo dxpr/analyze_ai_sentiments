@@ -50,9 +50,6 @@ function _analyze_ai_sentiments_is_supported_entity(EntityInterface $entity): bo
 
 /**
  * Implements hook_views_pre_view().
- *
- * @param array<string, mixed> $args
- *   View arguments.
  */
 function analyze_ai_sentiments_views_pre_view(ViewExecutable $view, string $display_id, array &$args): void {
   // Add settings link to the sentiments analysis view header.
