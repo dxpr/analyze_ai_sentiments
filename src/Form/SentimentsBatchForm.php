@@ -8,6 +8,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\analyze_ai_sentiments\Service\SentimentsBatchService;
+use Drupal\user\Entity\Role;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -82,7 +83,7 @@ final class SentimentsBatchForm extends FormBase {
       '#default_value' => static::CHUNK_SIZE_DEFAULT,
       '#min' => 1,
       '#max' => 50,
-      '#access' => in_array('administrator', $this->currentUser()->getRoles()),
+      '#access' => $this->isAllowedToChangeChunkSize(),
     ];
 
     $form['limit'] = [
@@ -124,7 +125,7 @@ final class SentimentsBatchForm extends FormBase {
       return;
     }
 
-    $chunk_size = $form_state->hasValue('chunk_size') && in_array('administrator', $this->currentUser()->getRoles()) ?
+    $chunk_size = $form_state->hasValue('chunk_size') && $this->isAllowedToChangeChunkSize() ?
       (int) $values['chunk_size']
       : static::CHUNK_SIZE_DEFAULT
       ;
@@ -177,6 +178,24 @@ final class SentimentsBatchForm extends FormBase {
     else {
       \Drupal::messenger()->addError(t('Sentiments analysis batch processing failed.'));
     }
+  }
+
+  /**
+   * Check if the current user can change the chunk size.
+   *
+   * For now limiting this to admin users only.
+   *
+   * @return bool
+   *   TRUE if the user can change the chunk size, FALSE otherwise.
+   */
+  private function isAllowedToChangeChunkSize(): bool {
+    $roleIds = \Drupal::currentUser()->getRoles();
+    foreach (Role::loadMultiple($roleIds) as $role) {
+      if ($role->isAdmin()) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
 }
