@@ -107,7 +107,7 @@ final class SentimentsBatchService {
 
     try {
       $analyzer = $this->analyzePluginManager
-        ->createInstance('ai_sentiments_analyzer');
+        ->createInstance('analyze_ai_sentiments_analyzer');
 
       foreach ($entities as $entity_data) {
         try {
