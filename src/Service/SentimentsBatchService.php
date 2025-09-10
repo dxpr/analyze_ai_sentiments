@@ -145,7 +145,7 @@ final class SentimentsBatchService {
 
     $context['message'] = $this->t('Processed @current of @max entities...', [
       '@current' => $context['results']['processed'],
-      '@max' => $context['sandbox']['total_entities'],
+      '@max' => $total_entities,
     ])->render();
 
   }
