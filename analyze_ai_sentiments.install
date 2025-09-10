@@ -7,6 +7,8 @@
 
 /**
  * Implements hook_schema().
+ *
+ * @phpstan-return array<string, mixed>
  */
 function analyze_ai_sentiments_schema(): array {
   $schema = [];

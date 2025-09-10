@@ -7,6 +7,8 @@
 
 /**
  * Implements hook_views_data().
+ *
+ * @phpstan-return array<string, mixed>
  */
 function analyze_ai_sentiments_views_data(): array {
   $data = [];
