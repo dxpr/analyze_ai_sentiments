@@ -13,7 +13,7 @@ use Drupal\views\ViewExecutable;
 /**
  * Implements hook_entity_update().
  */
-function analyze_ai_sentiments_entity_update(EntityInterface $entity) {
+function analyze_ai_sentiments_entity_update(EntityInterface $entity): void {
   if (_analyze_ai_sentiments_is_supported_entity($entity)) {
     \Drupal::service('analyze_ai_sentiments.storage')->deleteScores($entity);
   }
@@ -22,7 +22,7 @@ function analyze_ai_sentiments_entity_update(EntityInterface $entity) {
 /**
  * Implements hook_entity_delete().
  */
-function analyze_ai_sentiments_entity_delete(EntityInterface $entity) {
+function analyze_ai_sentiments_entity_delete(EntityInterface $entity): void {
   if (_analyze_ai_sentiments_is_supported_entity($entity)) {
     \Drupal::service('analyze_ai_sentiments.storage')->deleteScores($entity);
   }
@@ -51,7 +51,11 @@ function _analyze_ai_sentiments_is_supported_entity(EntityInterface $entity): bo
 /**
  * Implements hook_views_pre_view().
  */
-function analyze_ai_sentiments_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
+
+/**
+ * @param array<string, mixed> $args
+ */
+function analyze_ai_sentiments_views_pre_view(ViewExecutable $view, string $display_id, array &$args): void {
   // Add settings link to the sentiments analysis view header.
   if ($view->id() === 'ai_sentiments_analysis_results' && $display_id === 'page_1') {
     // Build the settings link if user has permission.

@@ -8,7 +8,11 @@
 /**
  * Implements hook_schema().
  */
-function analyze_ai_sentiments_schema() {
+
+/**
+ * @return array<string, mixed>
+ */
+function analyze_ai_sentiments_schema(): array {
   $schema = [];
 
   $schema['analyze_ai_sentiments_results'] = [
@@ -93,7 +97,7 @@ function analyze_ai_sentiments_schema() {
 /**
  * Implements hook_install().
  */
-function analyze_ai_sentiments_install() {
+function analyze_ai_sentiments_install(): void {
   // Create tables from schema.
   $schema = analyze_ai_sentiments_schema();
   $database = \Drupal::database();
@@ -107,7 +111,7 @@ function analyze_ai_sentiments_install() {
 /**
  * Implements hook_uninstall().
  */
-function analyze_ai_sentiments_uninstall() {
+function analyze_ai_sentiments_uninstall(): void {
   // Clean up any remaining data if tables exist.
   $database = \Drupal::database();
   $schema = $database->schema();
@@ -123,7 +127,11 @@ function analyze_ai_sentiments_uninstall() {
  * Updates plugin ID from ai_sentiments_analyzer to
  * analyze_ai_sentiments_analyzer.
  */
-function analyze_ai_sentiments_update_8001() {
+
+/**
+ * @return string
+ */
+function analyze_ai_sentiments_update_8001(): string {
   $config_factory = \Drupal::configFactory();
   $config = $config_factory->getEditable('analyze.settings');
   $status = $config->get('status') ?? [];

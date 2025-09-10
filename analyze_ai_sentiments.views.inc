@@ -7,8 +7,10 @@
 
 /**
  * Implements hook_views_data().
+ *
+ * @return array<string, mixed>
  */
-function analyze_ai_sentiments_views_data() {
+function analyze_ai_sentiments_views_data(): array {
   $data = [];
 
   $data['analyze_ai_sentiments_results']['table']['group'] = t('Sentiments Analysis');

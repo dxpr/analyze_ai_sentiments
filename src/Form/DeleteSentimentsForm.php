@@ -54,9 +54,12 @@ class DeleteSentimentsForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?string $sentiments_id = NULL): array {
-    /** @var array<string, mixed> $form */
     $this->sentimentsId = $sentiments_id;
     $form = parent::buildForm($form, $form_state);
 
@@ -109,9 +112,10 @@ class DeleteSentimentsForm extends ConfirmFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    /** @var array<string, mixed> $form */
     $config = $this->configFactory->getEditable('analyze_ai_sentiments.settings');
     $sentiments = $config->get('sentiments');
 

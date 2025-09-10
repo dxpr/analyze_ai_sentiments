@@ -7,7 +7,7 @@ namespace Drupal\analyze_ai_sentiments\Service;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
-use Drupal\analyze\AnalyzePluginManager;
+use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 
@@ -23,7 +23,7 @@ final class SentimentsBatchService {
     private readonly SentimentsStorageService $storage,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly EntityTypeBundleInfoInterface $bundleInfo,
-    private readonly AnalyzePluginManager $analyzePluginManager,
+    private readonly DefaultPluginManager $analyzePluginManager,
   ) {
   }
 
@@ -107,7 +107,7 @@ final class SentimentsBatchService {
 
     try {
       $analyzer = $this->analyzePluginManager
-        ->createInstance('ai_sentiments_analyzer');
+        ->createInstance('analyze_ai_sentiments_analyzer');
 
       foreach ($entities as $entity_data) {
         try {

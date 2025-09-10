@@ -54,7 +54,7 @@ class AddSentimentsForm extends FormBase {
    * @return bool
    *   TRUE if the sentiments exists, FALSE otherwise.
    */
-  public function sentimentsExists($id) {
+  public function sentimentsExists($id): bool {
     $config = $this->configFactory->get('analyze_ai_sentiments.settings');
     $sentiments = $config->get('sentiments') ?: [];
     return isset($sentiments[$id]);
@@ -62,9 +62,12 @@ class AddSentimentsForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    /** @var array<string, mixed> $form */
     $form['description'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
@@ -153,9 +156,10 @@ class AddSentimentsForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    /** @var array<string, mixed> $form */
     $config = $this->configFactory->getEditable('analyze_ai_sentiments.settings');
     $sentiments = $config->get('sentiments') ?: [];
 

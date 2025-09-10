@@ -38,6 +38,10 @@ final class SentimentsBatchForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['description'] = [
@@ -94,6 +98,10 @@ final class SentimentsBatchForm extends FormBase {
   /**
    * {@inheritdoc}
    */
+
+  /**
+   * @param array<string, mixed> $form
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $values = $form_state->getValues();
     $selected_types = array_filter($values['entity_types']);
@@ -138,6 +146,11 @@ final class SentimentsBatchForm extends FormBase {
    *   The batch results.
    * @param array $operations
    *   The batch operations.
+   */
+
+  /**
+   * @param array<string, mixed> $results
+   * @param array<string, mixed> $operations
    */
   public static function batchFinished(bool $success, array $results, array $operations): void {
     if ($success) {

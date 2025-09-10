@@ -158,9 +158,9 @@ final class SentimentsStorageService {
    */
   public function getAverageScores(): array {
     $query = $this->database->select('analyze_ai_sentiments_results', 'r');
-    $query->fields('r', ['sentiments_id'])
-      ->addExpression('AVG(score)', 'average_score')
-      ->groupBy('sentiments_id');
+    $query->addField('r', 'sentiments_id');
+    $query->addExpression('AVG(score)', 'average_score');
+    $query->groupBy('sentiments_id');
     $results = $query->execute()
       ->fetchAllKeyed();
 

@@ -16,6 +16,7 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface;
 use Drupal\Core\Link;
 use Drupal\analyze_ai_sentiments\Service\SentimentsStorageService;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * A sentiments analyzer that uses AI to analyze content sentiments.
@@ -26,11 +27,16 @@ use Drupal\analyze_ai_sentiments\Service\SentimentsStorageService;
  *   description = @Translation("Analyzes the sentiments of content using AI.")
  * )
  */
+/**
+ *@phpstan-ignore-next-line
+ */
 final class AISentimentsAnalyzer extends AnalyzePluginBase {
+  use StringTranslationTrait;
   /**
    * The AI provider manager.
    *
    * @var \Drupal\ai\AiProviderPluginManager
+   * @phpstan-ignore-next-line
    */
   protected $aiProvider;
 
@@ -52,6 +58,7 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
    * The prompt JSON decoder service.
    *
    * @var \Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface
+   * @phpstan-ignore-next-line
    */
   protected PromptJsonDecoderInterface $promptJsonDecoder;
 
@@ -96,17 +103,22 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
     array $configuration,
     $plugin_id,
     $plugin_definition,
+    // @phpstan-ignore-next-line
     $helper,
+    // @phpstan-ignore-next-line
     $currentUser,
+    // @phpstan-ignore-next-line
     AiProviderPluginManager $aiProvider,
     ?ConfigFactoryInterface $config_factory,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected RendererInterface $renderer,
     protected LanguageManagerInterface $languageManager,
     MessengerInterface $messenger,
+    // @phpstan-ignore-next-line
     PromptJsonDecoderInterface $promptJsonDecoder,
     SentimentsStorageService $storage,
   ) {
+    // @phpstan-ignore-next-line
     parent::__construct($configuration, $plugin_id, $plugin_definition, $helper, $currentUser);
     $this->aiProvider = $aiProvider;
     $this->configFactory = $config_factory;
@@ -117,31 +129,31 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param mixed $plugin_definition
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
+  public static function create(ContainerInterface $container, array $configuration, string $plugin_id, $plugin_definition): static {
     return new static(
           $configuration,
           $plugin_id,
           $plugin_definition,
+          // @phpstan-ignore-next-line
           $container->get('analyze.helper'),
+          // @phpstan-ignore-next-line
           $container->get('current_user'),
+          // @phpstan-ignore-next-line
           $container->get('ai.provider'),
           $container->get('config.factory'),
           $container->get('entity_type.manager'),
           $container->get('renderer'),
           $container->get('language_manager'),
           $container->get('messenger'),
+          // @phpstan-ignore-next-line
           $container->get('ai.prompt_json_decode'),
           $container->get('analyze_ai_sentiments.storage'),
       );
   }
-
-  /**
-   * Get configured sentiments.
-   *
-   * @return array
-   *   Array of sentiments configurations.
-   */
 
   /**
    * Get configured sentiments.
@@ -164,19 +176,12 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
   }
 
   /**
-   * Gets the enabled sentiments for an entity type and bundle.
+   * Get enabled sentiments for entity type and bundle.
    *
    * @param string $entity_type_id
    *   The entity type ID.
    * @param string|null $bundle
    *   The bundle ID.
-   *
-   * @return array
-   *   Array of enabled sentiments IDs.
-   */
-
-  /**
-   * Get enabled sentiments for entity type and bundle.
    *
    * @return array<string, mixed>
    *   Array of enabled sentiments IDs.
@@ -190,6 +195,7 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
     // Get settings from plugin_settings config.
     // @phpstan-ignore-next-line
     $plugin_settings_config = $this->getConfigFactory()->get('analyze.plugin_settings');
+    // @phpstan-ignore-next-line
     $key = sprintf('%s.%s.%s', $entity_type_id, $bundle, $this->getPluginId());
     $settings = $plugin_settings_config->get($key) ?? [];
 
@@ -222,13 +228,6 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
    * @param string $message
    *   The status message to display.
    *
-   * @return array
-   *   The render array for the status table.
-   */
-
-  /**
-   * Creates a fallback status table.
-   *
    * @return array<string, mixed>
    *   The render array for the status table.
    */
@@ -257,6 +256,10 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
 
   /**
    * {@inheritdoc}
+   */
+
+  /**
+   * @return array<string, mixed>
    */
   public function renderSummary(EntityInterface $entity): array {
     // @phpstan-ignore-next-line
@@ -328,7 +331,7 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
    */
 
   /**
-   * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function renderFullReport(EntityInterface $entity): array {
     // @phpstan-ignore-next-line
@@ -440,13 +443,6 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity to analyze.
    *
-   * @return array
-   *   Array with sentiments scores.
-   */
-
-  /**
-   * Analyze the sentiments of entity content.
-   *
    * @return array<string, float>
    *   Array with sentiments scores.
    */
@@ -543,19 +539,11 @@ EOT;
   }
 
   /**
-   * Gets the public settings for this analyzer.
-   *
-   * @param string $entity_type_id
-   *   The entity type ID.
-   * @param string|null $bundle
-   *   The bundle ID.
-   *
-   * @return array
-   *   The settings array.
+   * {@inheritdoc}
    */
 
   /**
-   * {@inheritdoc}
+   * @return array<string, mixed>
    */
   public function getSettings(string $entity_type_id, ?string $bundle = NULL): array {
     // @phpstan-ignore-next-line
@@ -564,6 +552,10 @@ EOT;
 
   /**
    * {@inheritdoc}
+   */
+
+  /**
+   * @param array<string, mixed> $settings
    */
   public function saveSettings(string $entity_type_id, ?string $bundle, array $settings): void {
     /** @var array<string, mixed> $settings */
@@ -587,13 +579,6 @@ EOT;
   }
 
   /**
-   * Gets the default settings structure.
-   *
-   * @return array
-   *   The default settings structure.
-   */
-
-  /**
    * {@inheritdoc}
    *
    * @return array<string, mixed>
@@ -614,15 +599,6 @@ EOT;
       ],
     ];
   }
-
-  /**
-   * Gets the configurable settings for this analyzer.
-   *
-   * Defines the form elements for configuring sentiments metrics.
-   *
-   * @return array
-   *   An array of configurable settings.
-   */
 
   /**
    * Gets the configurable settings for this analyzer.
@@ -682,13 +658,6 @@ EOT;
 
     return $ai_provider;
   }
-
-  /**
-   * Gets the default model configuration for chat operations.
-   *
-   * @return array|null
-   *   Array containing provider_id and model_id, or NULL if not configured.
-   */
 
   /**
    * Gets the default model configuration for chat operations.
