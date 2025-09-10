@@ -7,6 +7,7 @@ namespace Drupal\analyze_ai_sentiments\Service;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
@@ -87,7 +88,7 @@ final class SentimentsStorageService {
         $insert->values([
           'entity_type' => $entity->getEntityTypeId(),
           'entity_id' => $entity->id(),
-          'entity_revision_id' => method_exists($entity, 'getRevisionId') ? $entity->getRevisionId() : NULL,
+          'entity_revision_id' => $entity instanceof RevisionableInterface ? $entity->getRevisionId() : NULL,
           'langcode' => $entity->language()->getId(),
           'sentiments_id' => $sentiments_id,
           'score' => $score,
@@ -216,9 +217,7 @@ final class SentimentsStorageService {
     $rendered = $this->renderer->render($view);
 
     // Convert to string and clean up.
-    $content = is_object($rendered) && method_exists($rendered, '__toString')
-        ? $rendered->__toString()
-        : (string) $rendered;
+    $content = (string) $rendered;
 
     // Strip HTML tags and normalize whitespace.
     $content = strip_tags($content);

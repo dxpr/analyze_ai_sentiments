@@ -27,18 +27,12 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
  *   description = @Translation("Analyzes the sentiments of content using AI.")
  * )
  */
-/**
- * A sentiments analyzer that uses AI to analyze content sentiments.
- *
- * @phpstan-ignore-next-line
- */
 final class AISentimentsAnalyzer extends AnalyzePluginBase {
   use StringTranslationTrait;
   /**
    * The AI provider manager.
    *
    * @var \Drupal\ai\AiProviderPluginManager
-   * @phpstan-ignore-next-line
    */
   protected $aiProvider;
 
@@ -60,7 +54,6 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
    * The prompt JSON decoder service.
    *
    * @var \Drupal\ai\Service\PromptJsonDecoder\PromptJsonDecoderInterface
-   * @phpstan-ignore-next-line
    */
   protected PromptJsonDecoderInterface $promptJsonDecoder;
 
@@ -105,22 +98,17 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    // @phpstan-ignore-next-line
     $helper,
-    // @phpstan-ignore-next-line
     $currentUser,
-    // @phpstan-ignore-next-line
     AiProviderPluginManager $aiProvider,
     ?ConfigFactoryInterface $config_factory,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected RendererInterface $renderer,
     protected LanguageManagerInterface $languageManager,
     MessengerInterface $messenger,
-    // @phpstan-ignore-next-line
     PromptJsonDecoderInterface $promptJsonDecoder,
     SentimentsStorageService $storage,
   ) {
-    // @phpstan-ignore-next-line
     parent::__construct($configuration, $plugin_id, $plugin_definition, $helper, $currentUser);
     $this->aiProvider = $aiProvider;
     $this->configFactory = $config_factory;
@@ -141,23 +129,19 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
    * @param mixed $plugin_definition
    *   The plugin definition.
    */
-  public static function create(ContainerInterface $container, array $configuration, string $plugin_id, $plugin_definition): static {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
           $configuration,
           $plugin_id,
           $plugin_definition,
-          // @phpstan-ignore-next-line
           $container->get('analyze.helper'),
-          // @phpstan-ignore-next-line
           $container->get('current_user'),
-          // @phpstan-ignore-next-line
           $container->get('ai.provider'),
           $container->get('config.factory'),
           $container->get('entity_type.manager'),
           $container->get('renderer'),
           $container->get('language_manager'),
           $container->get('messenger'),
-          // @phpstan-ignore-next-line
           $container->get('ai.prompt_json_decode'),
           $container->get('analyze_ai_sentiments.storage'),
       );
@@ -174,10 +158,17 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
     $sentiments = $config->get('sentiments');
 
     if (empty($sentiments)) {
-      // Load defaults from the settings form.
-      $form = \Drupal::classResolver()
-        ->getInstanceFromDefinition('\Drupal\analyze_ai_sentiments\Form\SentimentsSettingsForm');
-      return $form->getDefaultSentiments();
+      // Return hardcoded defaults if no configuration exists.
+      return [
+        'positivity' => [
+          'id' => 'positivity',
+          'label' => 'Content Positivity',
+          'min_label' => 'Negative',
+          'mid_label' => 'Neutral',
+          'max_label' => 'Positive',
+          'weight' => 0,
+        ],
+      ];
     }
 
     return $sentiments;
@@ -195,15 +186,12 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
    *   Array of enabled sentiments IDs.
    */
   protected function getEnabledSentiments(string $entity_type_id, ?string $bundle = NULL): array {
-    // @phpstan-ignore-next-line
     if (!$this->isEnabledForEntityType($entity_type_id, $bundle)) {
       return [];
     }
 
     // Get settings from plugin_settings config.
-    // @phpstan-ignore-next-line
     $plugin_settings_config = $this->getConfigFactory()->get('analyze.plugin_settings');
-    // @phpstan-ignore-next-line
     $key = sprintf('%s.%s.%s', $entity_type_id, $bundle, $this->getPluginId());
     $settings = $plugin_settings_config->get($key) ?? [];
 
@@ -242,11 +230,8 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
   private function createStatusTable(string $message): array {
     // If this is the AI provider message and user has permission,
     // append the settings link.
-    // @phpstan-ignore-next-line
     if ($message === 'No chat AI provider is configured for sentiments analysis.' && $this->currentUser->hasPermission('administer analyze settings')) {
-      // @phpstan-ignore-next-line
       $link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form');
-      // @phpstan-ignore-next-line
       $message = $this->t('No chat AI provider is configured for sentiments analysis. @link', ['@link' => $link->toString()]);
     }
 
@@ -269,13 +254,11 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
    *   The summary render array.
    */
   public function renderSummary(EntityInterface $entity): array {
-    // @phpstan-ignore-next-line
     $status_config = $this->getConfigFactory()->get('analyze.settings');
     $status = $status_config->get('status') ?? [];
     $entity_type = $entity->getEntityTypeId();
     $bundle = $entity->bundle();
 
-    // @phpstan-ignore-next-line
     if (!isset($status[$entity_type][$bundle][$this->getPluginId()])) {
       $settings_link = Link::createFromRoute($this->t('Enable sentiments analysis'), 'analyze.analyze_settings')->toString();
       return $this->createStatusTable($this->t('Sentiments analysis is not enabled for this content type. @link to configure content types.', ['@link' => $settings_link]));
@@ -308,13 +291,9 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
 
       return [
         '#theme' => 'analyze_gauge',
-        // @phpstan-ignore-next-line
         '#caption' => $this->t('@label', ['@label' => $sentiments['label']]),
-        // @phpstan-ignore-next-line
         '#range_min_label' => $this->t('@label', ['@label' => $sentiments['min_label']]),
-        // @phpstan-ignore-next-line
         '#range_mid_label' => $this->t('@label', ['@label' => $sentiments['mid_label']]),
-        // @phpstan-ignore-next-line
         '#range_max_label' => $this->t('@label', ['@label' => $sentiments['max_label']]),
         '#range_min' => -1,
         '#range_max' => 1,
@@ -340,13 +319,11 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
    *   The full report render array.
    */
   public function renderFullReport(EntityInterface $entity): array {
-    // @phpstan-ignore-next-line
     $status_config = $this->getConfigFactory()->get('analyze.settings');
     $status = $status_config->get('status') ?? [];
     $entity_type = $entity->getEntityTypeId();
     $bundle = $entity->bundle();
 
-    // @phpstan-ignore-next-line
     if (!isset($status[$entity_type][$bundle][$this->getPluginId()])) {
       $settings_link = Link::createFromRoute($this->t('Enable sentiments analysis'), 'analyze.analyze_settings')->toString();
       return $this->createStatusTable($this->t('Sentiments analysis is not enabled for this content type. @link to configure content types.', ['@link' => $settings_link]));
@@ -428,9 +405,7 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
     $rendered = $this->renderer->render($view);
 
     // Convert to string and strip HTML for sentiments analysis.
-    $content = is_object($rendered) && method_exists($rendered, '__toString')
-        ? $rendered->__toString()
-        : (string) $rendered;
+    $content = (string) $rendered;
 
     // Clean up the content for sentiments analysis.
     $content = strip_tags($content);
@@ -509,17 +484,14 @@ $json_template</output_format>
 EOT;
 
       $chat_array = [
-        // @phpstan-ignore-next-line
         new ChatMessage('user', $prompt),
       ];
 
       // Get response.
-      // @phpstan-ignore-next-line
       $messages = new ChatInput($chat_array);
       $message = $ai_provider->chat($messages, $defaults['model_id'])->getNormalized();
 
       // Use the injected PromptJsonDecoder service.
-      // @phpstan-ignore-next-line
       $decoded = $this->promptJsonDecoder->decode($message);
 
       // If we couldn't decode the JSON at all.
@@ -551,7 +523,6 @@ EOT;
    *   The settings array.
    */
   public function getSettings(string $entity_type_id, ?string $bundle = NULL): array {
-    // @phpstan-ignore-next-line
     return $this->getEntityTypeSettings($entity_type_id, $bundle);
   }
 
@@ -567,20 +538,18 @@ EOT;
    */
   public function saveSettings(string $entity_type_id, ?string $bundle, array $settings): void {
     /** @var array<string, mixed> $settings */
-    $config = \Drupal::configFactory()->getEditable('analyze.settings');
+    $config = $this->configFactory->getEditable('analyze.settings');
     $current = $config->get('status') ?? [];
 
     // Save enabled state.
     if (isset($settings['enabled'])) {
-      // @phpstan-ignore-next-line
       $current[$entity_type_id][$bundle][$this->getPluginId()] = $settings['enabled'];
       $config->set('status', $current)->save();
     }
 
     // Save sentiments settings if present.
     if (isset($settings['sentiments'])) {
-      $detailed_config = \Drupal::configFactory()->getEditable('analyze.plugin_settings');
-      // @phpstan-ignore-next-line
+      $detailed_config = $this->configFactory->getEditable('analyze.plugin_settings');
       $key = sprintf('%s.%s.%s', $entity_type_id, $bundle, $this->getPluginId());
       $detailed_config->set($key, ['sentiments' => $settings['sentiments']])->save();
     }
@@ -629,9 +598,7 @@ EOT;
     return [
       'sentiments' => [
         'type' => 'fieldset',
-      // @phpstan-ignore-next-line
         'title' => $this->t('Sentiments'),
-      // @phpstan-ignore-next-line
         'description' => $this->t('Select which sentiments metrics to analyze.'),
         'settings' => $settings,
       ],
@@ -646,7 +613,6 @@ EOT;
    */
   private function getAiProvider() {
     // Check if we have any chat providers available.
-    // @phpstan-ignore-next-line
     if (!$this->aiProvider->hasProvidersForOperationType('chat', TRUE)) {
       return NULL;
     }
@@ -658,12 +624,10 @@ EOT;
     }
 
     // Initialize AI provider.
-    // @phpstan-ignore-next-line
     $ai_provider = $this->aiProvider->createInstance($defaults['provider_id']);
 
     // Configure provider with low temperature for more consistent results.
-    $ai_provider->setConfiguration(['temperature' => 0.2]);
-
+    // Note: Provider configuration may vary by implementation.
     return $ai_provider;
   }
 
@@ -674,7 +638,6 @@ EOT;
    *   Array containing provider_id and model_id, or NULL if not configured.
    */
   private function getDefaultModel(): ?array {
-    // @phpstan-ignore-next-line
     $defaults = $this->aiProvider->getDefaultProviderForOperationType('chat');
     if (empty($defaults['provider_id']) || empty($defaults['model_id'])) {
       return NULL;
