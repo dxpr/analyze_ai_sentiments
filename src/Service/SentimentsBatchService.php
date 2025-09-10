@@ -99,15 +99,14 @@ final class SentimentsBatchService {
    *   Batch context.
    */
   public function processBatch(array $entities, bool $force_refresh, int $total_entities, array &$context): void {
-    if (!isset($context['sandbox']['total_entities'])) {
-      $context['sandbox']['total_entities'] = $total_entities;
+    if (!isset($context['results']['processed'])) {
       $context['results']['processed'] = 0;
       $context['results']['errors'] = [];
     }
 
     try {
       $analyzer = $this->analyzePluginManager
-        ->createInstance('ai_sentiments_analyzer');
+        ->createInstance('analyze_ai_sentiments_analyzer');
 
       foreach ($entities as $entity_data) {
         try {
@@ -145,16 +144,9 @@ final class SentimentsBatchService {
 
     $context['message'] = $this->t('Processed @current of @max entities...', [
       '@current' => $context['results']['processed'],
-      '@max' => $context['sandbox']['total_entities'],
+      '@max' => $total_entities,
     ])->render();
 
-    // Calculate progress based on total entities processed vs total entities.
-    if ($context['sandbox']['total_entities'] > 0) {
-      $context['finished'] = $context['results']['processed'] / $context['sandbox']['total_entities'];
-    }
-    else {
-      $context['finished'] = 1;
-    }
   }
 
   /**
