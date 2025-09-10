@@ -9,6 +9,7 @@
  * Implements hook_views_data().
  *
  * @return array<string, mixed>
+ *   Views data array.
  */
 function analyze_ai_sentiments_views_data(): array {
   $data = [];

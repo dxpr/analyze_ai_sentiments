@@ -28,7 +28,9 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
  * )
  */
 /**
- *@phpstan-ignore-next-line
+ * A sentiments analyzer that uses AI to analyze content sentiments.
+ *
+ * @phpstan-ignore-next-line
  */
 final class AISentimentsAnalyzer extends AnalyzePluginBase {
   use StringTranslationTrait;
@@ -130,8 +132,14 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
   /**
    * {@inheritdoc}
    *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The DI container.
    * @param array<string, mixed> $configuration
+   *   The plugin configuration.
+   * @param string $plugin_id
+   *   The plugin ID.
    * @param mixed $plugin_definition
+   *   The plugin definition.
    */
   public static function create(ContainerInterface $container, array $configuration, string $plugin_id, $plugin_definition): static {
     return new static(
@@ -256,10 +264,9 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
 
   /**
    * {@inheritdoc}
-   */
-
-  /**
+   *
    * @return array<string, mixed>
+   *   The summary render array.
    */
   public function renderSummary(EntityInterface $entity): array {
     // @phpstan-ignore-next-line
@@ -328,10 +335,9 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
 
   /**
    * {@inheritdoc}
-   */
-
-  /**
+   *
    * @return array<string, mixed>
+   *   The full report render array.
    */
   public function renderFullReport(EntityInterface $entity): array {
     // @phpstan-ignore-next-line
@@ -540,10 +546,9 @@ EOT;
 
   /**
    * {@inheritdoc}
-   */
-
-  /**
+   *
    * @return array<string, mixed>
+   *   The settings array.
    */
   public function getSettings(string $entity_type_id, ?string $bundle = NULL): array {
     // @phpstan-ignore-next-line
@@ -552,10 +557,13 @@ EOT;
 
   /**
    * {@inheritdoc}
-   */
-
-  /**
+   *
+   * @param string $entity_type_id
+   *   The entity type ID.
+   * @param string|null $bundle
+   *   The bundle name.
    * @param array<string, mixed> $settings
+   *   The settings to save.
    */
   public function saveSettings(string $entity_type_id, ?string $bundle, array $settings): void {
     /** @var array<string, mixed> $settings */
