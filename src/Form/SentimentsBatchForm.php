@@ -15,6 +15,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class SentimentsBatchForm extends FormBase {
 
+  /**
+   * Default chunk size for batch processing.
+   */
+  public const CHUNK_SIZE_DEFAULT = 5;
+
   public function __construct(
     private readonly SentimentsBatchService $batchService,
   ) {
@@ -74,9 +79,10 @@ final class SentimentsBatchForm extends FormBase {
       '#type' => 'number',
       '#title' => $this->t('Chunk Size'),
       '#description' => $this->t('Number of entities to process in each batch.'),
-      '#default_value' => 5,
+      '#default_value' => static::CHUNK_SIZE_DEFAULT,
       '#min' => 1,
       '#max' => 50,
+      '#access' => in_array('administrator', $this->currentUser()->getRoles()),
     ];
 
     $form['limit'] = [
@@ -118,7 +124,10 @@ final class SentimentsBatchForm extends FormBase {
       return;
     }
 
-    $chunk_size = (int) $values['chunk_size'];
+    $chunk_size = $form_state->hasValue('chunk_size') && in_array('administrator', $this->currentUser()->getRoles()) ?
+      (int) $values['chunk_size']
+      : static::CHUNK_SIZE_DEFAULT
+      ;
     $total_entities = count($entities);
     $batch = [
       'title' => $this->t('Analyzing @count entities for sentiments', ['@count' => $total_entities]),
