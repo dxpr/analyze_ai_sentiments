@@ -99,8 +99,7 @@ final class SentimentsBatchService {
    *   Batch context.
    */
   public function processBatch(array $entities, bool $force_refresh, int $total_entities, array &$context): void {
-    if (!isset($context['sandbox']['total_entities'])) {
-      $context['sandbox']['total_entities'] = $total_entities;
+    if (!isset($context['results']['processed'])) {
       $context['results']['processed'] = 0;
       $context['results']['errors'] = [];
     }
