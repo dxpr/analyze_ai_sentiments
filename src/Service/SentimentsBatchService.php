@@ -148,13 +148,6 @@ final class SentimentsBatchService {
       '@max' => $context['sandbox']['total_entities'],
     ])->render();
 
-    // Calculate progress based on total entities processed vs total entities.
-    if ($context['sandbox']['total_entities'] > 0) {
-      $context['finished'] = $context['results']['processed'] / $context['sandbox']['total_entities'];
-    }
-    else {
-      $context['finished'] = 1;
-    }
   }
 
   /**
