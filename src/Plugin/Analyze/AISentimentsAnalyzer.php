@@ -297,11 +297,17 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
       ];
     }
 
-    // If no scores available but everything is configured correctly,
-    // show a helpful message.
+    // If no scores available, check if it's a provider issue or analysis
+    // failure.
     if (!empty($content = $this->getHtml($entity))) {
-      $ai_link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form')->toString();
-      return $this->createStatusTable($this->t('No chat AI provider is configured for sentiments analysis. @link to set up AI services.', ['@link' => $ai_link]));
+      $ai_provider = $this->getAiProvider();
+      if (!$ai_provider) {
+        $ai_link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form')->toString();
+        return $this->createStatusTable($this->t('No chat AI provider is configured for sentiments analysis. @link to set up AI services.', ['@link' => $ai_link]));
+      }
+      else {
+        return $this->createStatusTable($this->t('AI analysis failed to generate scores. Check logs for details or try again.'));
+      }
     }
 
     return $this->createStatusTable($this->t('This content has no text available for sentiments analysis. Add content such as body text, fields, or descriptions to enable analysis.'));
@@ -338,10 +344,17 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
       }
     }
 
-    // If no scores available but content exists, show the table message.
+    // If no scores available but content exists, check if it's a provider
+    // issue or analysis failure.
     if (empty($scores) && !empty($this->getHtml($entity))) {
-      $ai_link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form')->toString();
-      return $this->createStatusTable($this->t('No chat AI provider is configured for sentiments analysis. @link to set up AI services.', ['@link' => $ai_link]));
+      $ai_provider = $this->getAiProvider();
+      if (!$ai_provider) {
+        $ai_link = Link::createFromRoute($this->t('Configure AI provider'), 'ai.settings_form')->toString();
+        return $this->createStatusTable($this->t('No chat AI provider is configured for sentiments analysis. @link to set up AI services.', ['@link' => $ai_link]));
+      }
+      else {
+        return $this->createStatusTable($this->t('AI analysis failed to generate scores. Check logs for details or try again.'));
+      }
     }
 
     // If no content available, show that message.
@@ -372,6 +385,19 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
           '#range_max' => 1,
           '#value' => $gauge_value,
           '#display_value' => sprintf('%+.1f', $scores[$id]),
+        ];
+      }
+      else {
+        // Show analysis failure message for sentiments without scores.
+        $build[$id] = [
+          '#theme' => 'analyze_table',
+          '#table_title' => $sentiments['label'],
+          '#rows' => [
+            [
+              'label' => 'Status',
+              'data' => $this->t('AI analysis failed to generate score. Check logs for details or try again.'),
+            ],
+          ],
         ];
       }
     }
