@@ -144,32 +144,7 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
    *   Array of sentiments configurations.
    */
   protected function getConfiguredSentiments(): array {
-    $config = $this->configFactory->get('analyze_ai_sentiments.settings');
-    $sentiments = $config->get('sentiments');
-
-    if (empty($sentiments)) {
-      // Load defaults if no sentiments configured.
-      return [
-        'trust' => [
-          'id' => 'trust',
-          'label' => 'Trust/Credibility',
-          'min_label' => 'Promotional',
-          'mid_label' => 'Balanced',
-          'max_label' => 'Authoritative',
-          'weight' => 0,
-        ],
-        'objectivity' => [
-          'id' => 'objectivity',
-          'label' => 'Objectivity',
-          'min_label' => 'Subjective',
-          'mid_label' => 'Mixed',
-          'max_label' => 'Objective',
-          'weight' => 1,
-        ],
-      ];
-    }
-
-    return $sentiments;
+    return $this->storage->getAllSentiments();
   }
 
   /**
@@ -197,14 +172,14 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
     $sentiments = $this->getConfiguredSentiments();
 
     $enabled = [];
-    foreach ($sentiments as $id => $sentiments) {
+    foreach ($sentiments as $id => $sentiment) {
       // If no settings exist yet, enable all sentiments by default.
       if (!isset($settings['sentiments'])) {
-        $enabled[$id] = $sentiments;
+        $enabled[$id] = $sentiment;
       }
       // Otherwise check if explicitly enabled in settings.
       elseif (isset($settings['sentiments'][$id]) && $settings['sentiments'][$id]) {
-        $enabled[$id] = $sentiments;
+        $enabled[$id] = $sentiment;
       }
     }
 
@@ -370,17 +345,17 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
       ],
     ];
 
-    foreach ($enabled_sentiments as $id => $sentiments) {
+    foreach ($enabled_sentiments as $id => $sentiment) {
       if (isset($scores[$id])) {
         // Convert -1 to +1 range to 0 to 1 for gauge.
         $gauge_value = ($scores[$id] + 1) / 2;
 
         $build[$id] = [
           '#theme' => 'analyze_gauge',
-          '#caption' => $this->t('@label', ['@label' => $sentiments['label']]),
-          '#range_min_label' => $this->t('@label', ['@label' => $sentiments['min_label']]),
-          '#range_mid_label' => $this->t('@label', ['@label' => $sentiments['mid_label']]),
-          '#range_max_label' => $this->t('@label', ['@label' => $sentiments['max_label']]),
+          '#caption' => $this->t('@label', ['@label' => $sentiment['label']]),
+          '#range_min_label' => $this->t('@label', ['@label' => $sentiment['min_label']]),
+          '#range_mid_label' => $this->t('@label', ['@label' => $sentiment['mid_label']]),
+          '#range_max_label' => $this->t('@label', ['@label' => $sentiment['max_label']]),
           '#range_min' => -1,
           '#range_max' => 1,
           '#value' => $gauge_value,
@@ -467,13 +442,13 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
 
       // Build sentiments descriptions with their ranges.
       $sentiments_descriptions = [];
-      foreach ($enabled_sentiments as $id => $sentiments) {
+      foreach ($enabled_sentiments as $id => $sentiment) {
         $sentiments_descriptions[] = sprintf(
               "- %s: Score from -1.0 (%s) to +1.0 (%s), with 0.0 being %s",
-              $sentiments['label'],
-              $sentiments['min_label'],
-              $sentiments['max_label'],
-              $sentiments['mid_label']
+              $sentiment['label'],
+              $sentiment['min_label'],
+              $sentiment['max_label'],
+              $sentiment['mid_label']
           );
       }
 
@@ -519,7 +494,7 @@ EOT;
 
       // Validate and normalize scores to ensure they're within -1 to +1 range.
       $scores = [];
-      foreach ($enabled_sentiments as $id => $sentiments) {
+      foreach ($enabled_sentiments as $id => $sentiment) {
         if (isset($decoded[$id])) {
           $score = (float) $decoded[$id];
           // Clamp score to -1 to +1 range.
@@ -573,7 +548,7 @@ EOT;
     $sentiments = $this->getConfiguredSentiments();
     $default_sentiments = [];
 
-    foreach ($sentiments as $id => $sentiments) {
+    foreach ($sentiments as $id => $sentiment) {
       $default_sentiments[$id] = TRUE;
     }
 
@@ -597,10 +572,10 @@ EOT;
     $sentiments = $this->getConfiguredSentiments();
     $settings = [];
 
-    foreach ($sentiments as $id => $sentiments) {
+    foreach ($sentiments as $id => $sentiment) {
       $settings[$id] = [
         'type' => 'checkbox',
-        'title' => $sentiments['label'],
+        'title' => $sentiment['label'],
         'default_value' => TRUE,
       ];
     }

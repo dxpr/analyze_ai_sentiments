@@ -102,6 +102,58 @@ function analyze_ai_sentiments_install() {
       $database->schema()->createTable($table_name, $table_spec);
     }
   }
+
+  // Install default sentiment configurations.
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('analyze_ai_sentiments.settings');
+
+  // Only install defaults if no sentiments are configured.
+  if (empty($config->get('sentiments'))) {
+    $default_sentiments = [
+      'overall' => [
+        'id' => 'overall',
+        'label' => 'Overall Sentiments',
+        'min_label' => 'Negative',
+        'mid_label' => 'Neutral',
+        'max_label' => 'Positive',
+        'weight' => 0,
+      ],
+      'engagement' => [
+        'id' => 'engagement',
+        'label' => 'Engagement Level',
+        'min_label' => 'Passive',
+        'mid_label' => 'Balanced',
+        'max_label' => 'Interactive',
+        'weight' => 1,
+      ],
+      'trust' => [
+        'id' => 'trust',
+        'label' => 'Trust/Credibility',
+        'min_label' => 'Promotional',
+        'mid_label' => 'Balanced',
+        'max_label' => 'Authoritative',
+        'weight' => 2,
+      ],
+      'objectivity' => [
+        'id' => 'objectivity',
+        'label' => 'Objectivity',
+        'min_label' => 'Subjective',
+        'mid_label' => 'Mixed',
+        'max_label' => 'Objective',
+        'weight' => 3,
+      ],
+      'complexity' => [
+        'id' => 'complexity',
+        'label' => 'Technical Complexity',
+        'min_label' => 'Basic',
+        'mid_label' => 'Moderate',
+        'max_label' => 'Complex',
+        'weight' => 4,
+      ],
+    ];
+
+    $config->set('sentiments', $default_sentiments)->save();
+  }
 }
 
 /**

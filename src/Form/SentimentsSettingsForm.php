@@ -77,58 +77,11 @@ class SentimentsSettingsForm extends ConfigFormBase {
   }
 
   /**
-   * Gets the default sentiments configurations.
-   *
-   * @return array<string, array<string, mixed>>
-   *   Array of default sentiments configurations.
-   */
-  public function getDefaultSentiments(): array {
-    return [
-      'sentiments' => [
-        'label' => $this->t('Overall Sentiments'),
-        'min_label' => $this->t('Negative'),
-        'mid_label' => $this->t('Neutral'),
-        'max_label' => $this->t('Positive'),
-        'weight' => 0,
-      ],
-      'engagement' => [
-        'label' => $this->t('Engagement Level'),
-        'min_label' => $this->t('Passive'),
-        'mid_label' => $this->t('Balanced'),
-        'max_label' => $this->t('Interactive'),
-        'weight' => 1,
-      ],
-      'trust' => [
-        'label' => $this->t('Trust/Credibility'),
-        'min_label' => $this->t('Promotional'),
-        'mid_label' => $this->t('Balanced'),
-        'max_label' => $this->t('Authoritative'),
-        'weight' => 2,
-      ],
-      'objectivity' => [
-        'label' => $this->t('Objectivity'),
-        'min_label' => $this->t('Subjective'),
-        'mid_label' => $this->t('Mixed'),
-        'max_label' => $this->t('Objective'),
-        'weight' => 3,
-      ],
-      'complexity' => [
-        'label' => $this->t('Technical Complexity'),
-        'min_label' => $this->t('Basic'),
-        'mid_label' => $this->t('Moderate'),
-        'max_label' => $this->t('Complex'),
-        'weight' => 4,
-      ],
-    ];
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     /** @var array<string, mixed> $form */
-    $config = $this->config('analyze_ai_sentiments.settings');
-    $sentiments = $config->get('sentiments') ?: $this->getDefaultSentiments();
+    $sentiments = $this->sentimentstorage->getAllSentiments();
 
     $form['description'] = [
       '#type' => 'html_tag',
@@ -166,7 +119,7 @@ class SentimentsSettingsForm extends ConfigFormBase {
       '#attributes' => ['class' => ['sentiments-table-container']],
     ];
 
-    $form['table']['sentiments'] = [
+    $form['sentiments'] = [
       '#type' => 'table',
       '#header' => [
         $this->t('Sentiments'),
@@ -189,8 +142,12 @@ class SentimentsSettingsForm extends ConfigFormBase {
     });
 
     // Add existing sentiments to the table.
-    foreach ($sentiments as $id => $sentiments) {
-      $form['table']['sentiments'][$id] = [
+    foreach ($sentiments as $id => $sentiment) {
+      // Add safety check for corrupted data.
+      if (!is_array($sentiment) || !isset($sentiment['label'])) {
+        continue;
+      }
+      $form['sentiments'][$id] = [
         '#attributes' => [
           'class' => ['draggable'],
         ],
@@ -198,7 +155,7 @@ class SentimentsSettingsForm extends ConfigFormBase {
           '#type' => 'textfield',
           '#title' => $this->t('Label'),
           '#title_display' => 'invisible',
-          '#default_value' => $sentiments['label'],
+          '#default_value' => $sentiment['label'],
           '#required' => TRUE,
         ],
         'labels' => [
@@ -207,19 +164,19 @@ class SentimentsSettingsForm extends ConfigFormBase {
           'min_label' => [
             '#type' => 'textfield',
             '#title' => $this->t('Minimum'),
-            '#default_value' => $sentiments['min_label'],
+            '#default_value' => $sentiment['min_label'],
             '#required' => TRUE,
           ],
           'mid_label' => [
             '#type' => 'textfield',
             '#title' => $this->t('Middle'),
-            '#default_value' => $sentiments['mid_label'],
+            '#default_value' => $sentiment['mid_label'],
             '#required' => TRUE,
           ],
           'max_label' => [
             '#type' => 'textfield',
             '#title' => $this->t('Maximum'),
-            '#default_value' => $sentiments['max_label'],
+            '#default_value' => $sentiment['max_label'],
             '#required' => TRUE,
           ],
         ],
@@ -227,7 +184,7 @@ class SentimentsSettingsForm extends ConfigFormBase {
           '#type' => 'weight',
           '#title' => $this->t('Weight'),
           '#title_display' => 'invisible',
-          '#default_value' => $sentiments['weight'],
+          '#default_value' => $sentiment['weight'],
           '#attributes' => ['class' => ['sentiments-weight']],
         ],
         'operations' => [
@@ -270,26 +227,25 @@ class SentimentsSettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     /** @var array<string, mixed> $form */
-    $sentiments = [];
-    foreach ($form_state->getValue('sentiments') as $id => $values) {
-      $sentiments[$id] = [
-        'label' => $values['label'],
-        'min_label' => $values['labels']['min_label'],
-        'mid_label' => $values['labels']['mid_label'],
-        'max_label' => $values['labels']['max_label'],
-        'weight' => $values['weight'],
-      ];
+    // Save each sentiment using the storage service.
+    $sentiments_to_save = $form_state->getValue('sentiments') ?: [];
+
+    foreach ($sentiments_to_save as $id => $values) {
+      if (!isset($values['labels']['min_label'])) {
+        continue;
+      }
+
+      $this->sentimentstorage->saveSentiment(
+        $id,
+        $values['label'],
+        $values['labels']['min_label'],
+        $values['labels']['mid_label'],
+        $values['labels']['max_label'],
+        (int) $values['weight']
+      );
     }
 
-    $this->config('analyze_ai_sentiments.settings')
-      ->set('sentiments', $sentiments)
-      ->save();
-
-    // Invalidate all cached sentiments analysis results since configuration
-    // changed.
-    $this->sentimentstorage->invalidateConfigCache();
-
-    parent::submitForm($form, $form_state);
+    $this->messenger()->addStatus($this->t('The configuration options have been saved.'));
   }
 
 }
