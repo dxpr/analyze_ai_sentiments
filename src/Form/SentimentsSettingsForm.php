@@ -194,11 +194,15 @@ class SentimentsSettingsForm extends FormBase {
       ];
     }
 
-    $form = parent::buildForm($form, $form_state);
-
-    // Improve the save button.
-    $form['actions']['submit']['#value'] = $this->t('Save changes');
-    $form['actions']['submit']['#attributes']['class'][] = 'button--primary';
+    // Add form actions.
+    $form['actions'] = [
+      '#type' => 'actions',
+      'submit' => [
+        '#type' => 'submit',
+        '#value' => $this->t('Save changes'),
+        '#button_type' => 'primary',
+      ],
+    ];
 
     return $form;
   }

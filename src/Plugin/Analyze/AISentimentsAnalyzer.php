@@ -366,7 +366,7 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
         // Show analysis failure message for sentiments without scores.
         $build[$id] = [
           '#theme' => 'analyze_table',
-          '#table_title' => $sentiments['label'],
+          '#table_title' => $sentiment['label'],
           '#rows' => [
             [
               'label' => 'Status',
