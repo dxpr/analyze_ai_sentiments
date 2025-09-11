@@ -242,7 +242,7 @@ final class SentimentsStorageService {
       return $this->getDefaultSentiments();
     }
 
-    // Validate the structure - each value should be an array with required keys.
+    // Validate structure - each value should be an array with required keys.
     $valid_sentiments = [];
     foreach ($sentiments as $id => $sentiment) {
       if (is_array($sentiment) && isset($sentiment['label'], $sentiment['min_label'], $sentiment['mid_label'], $sentiment['max_label'])) {
