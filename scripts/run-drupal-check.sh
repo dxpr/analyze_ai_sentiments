@@ -26,6 +26,8 @@ parameters:
         - web/modules/contrib/analyze_ai_sentiments
     # Set the analysis level (0-9)
     level: 5
+    # Don't treat PHPDoc types as certain to reduce false positives
+    treatPhpDocTypesAsCertain: false
 EOF
 
 mkdir -p web/modules/contrib/
@@ -36,6 +38,9 @@ fi
 
 # Install the statistics module if D11 (removed from core).
 composer require drupal/statistics --no-interaction
+
+# Install required dependencies for analyze_ai_sentiments module
+composer require drupal/analyze drupal/ai --no-interaction
 
 # Install PHPStan extensions for Drupal 11 and Drush for command analysis
 composer require --dev phpstan/phpstan mglaman/phpstan-drupal phpstan/phpstan-deprecation-rules drush/drush --with-all-dependencies --no-interaction

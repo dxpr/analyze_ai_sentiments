@@ -48,7 +48,7 @@ final class SentimentsBatchService {
 
       $query = $this->entityTypeManager->getStorage($entity_type_id)
         ->getQuery()
-        ->accessCheck(TRUE)
+        ->accessCheck(FALSE)
         ->condition('type', $bundle);
 
       // Only include published content.
@@ -187,7 +187,7 @@ final class SentimentsBatchService {
   private function getAnalyzedEntityIds(string $entity_type_id, string $bundle): array {
     // Get entities that have valid cached analysis.
     $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery()
-      ->accessCheck(TRUE)
+      ->accessCheck(FALSE)
       ->condition('type', $bundle);
 
     $all_ids = $query->execute();

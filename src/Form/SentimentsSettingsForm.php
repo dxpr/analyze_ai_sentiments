@@ -9,6 +9,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\analyze_ai_sentiments\Service\SentimentsStorageService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 
 /**
  * Configure sentiments analysis settings.
@@ -20,6 +21,11 @@ class SentimentsSettingsForm extends ConfigFormBase {
   protected SentimentsStorageService $sentimentstorage;
 
   /**
+   * The current user service.
+   */
+  protected AccountProxyInterface $currentUser;
+
+  /**
    * Constructs a SentimentsSettingsForm object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -28,24 +34,30 @@ class SentimentsSettingsForm extends ConfigFormBase {
    *   The typed config manager.
    * @param \Drupal\analyze_ai_sentiments\Service\SentimentsStorageService $sentiments_storage
    *   The sentiments storage service.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current user service.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typed_config_manager,
     SentimentsStorageService $sentiments_storage,
+    AccountProxyInterface $current_user,
   ) {
     parent::__construct($config_factory, $typed_config_manager);
     $this->sentimentstorage = $sentiments_storage;
+    $this->currentUser = $current_user;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new static(
+    /** @var static */
+    return new self(
           $container->get('config.factory'),
           $container->get('config.typed'),
-          $container->get('analyze_ai_sentiments.storage')
+          $container->get('analyze_ai_sentiments.storage'),
+          $container->get('current_user')
       );
   }
 
@@ -130,8 +142,7 @@ class SentimentsSettingsForm extends ConfigFormBase {
     ];
 
     // Add link to reports page if user has permission.
-    $current_user = \Drupal::currentUser();
-    if ($current_user->hasPermission('access site reports')) {
+    if ($this->currentUser->hasPermission('access site reports')) {
       $reports_url = Url::fromRoute('view.ai_sentiments_analysis_results.page_1');
       if ($reports_url->access()) {
         $form['actions_top'] = [
