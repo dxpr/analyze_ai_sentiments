@@ -6,6 +6,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\analyze_ai_sentiments\Service\SentimentsStorageService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,13 +21,26 @@ class AddSentimentsForm extends FormBase {
   protected $configFactory;
 
   /**
+   * The sentiments storage service.
+   *
+   * @var \Drupal\analyze_ai_sentiments\Service\SentimentsStorageService
+   */
+  protected $sentimentsStorage;
+
+  /**
    * Constructs a new AddSentimentsForm.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\analyze_ai_sentiments\Service\SentimentsStorageService $sentiments_storage
+   *   The sentiments storage service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory) {
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    SentimentsStorageService $sentiments_storage,
+  ) {
     $this->configFactory = $config_factory;
+    $this->sentimentsStorage = $sentiments_storage;
   }
 
   /**
@@ -35,7 +49,8 @@ class AddSentimentsForm extends FormBase {
   public static function create(ContainerInterface $container): static {
     /** @var static */
     return new self(
-          $container->get('config.factory')
+          $container->get('config.factory'),
+          $container->get('analyze_ai_sentiments.storage')
       );
   }
 
@@ -56,9 +71,7 @@ class AddSentimentsForm extends FormBase {
    *   TRUE if the sentiments exists, FALSE otherwise.
    */
   public function sentimentsExists($id) {
-    $config = $this->configFactory->get('analyze_ai_sentiments.settings');
-    $sentiments = $config->get('sentiments') ?: [];
-    return isset($sentiments[$id]);
+    return $this->sentimentsStorage->sentimentExists($id);
   }
 
   /**
@@ -157,27 +170,25 @@ class AddSentimentsForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     /** @var array<string, mixed> $form */
-    $config = $this->configFactory->getEditable('analyze_ai_sentiments.settings');
-    $sentiments = $config->get('sentiments') ?: [];
+    $values = $form_state->getValues();
 
     // Get the maximum weight and add 1.
+    $sentiments = $this->sentimentsStorage->getAllSentiments();
     $max_weight = 0;
-    foreach ($sentiments as $sentiments) {
-      $max_weight = max($max_weight, $sentiments['weight'] ?? 0);
+    foreach ($sentiments as $sentiment) {
+      $max_weight = max($max_weight, $sentiment['weight'] ?? 0);
     }
 
-    $values = $form_state->getValues();
-    $sentiments[$values['id']] = [
-      'id' => $values['id'],
-      'label' => $values['label'],
-      'min_label' => $values['min_label'],
-      'mid_label' => $values['mid_label'],
-      'max_label' => $values['max_label'],
-      'weight' => $max_weight + 1,
-    ];
+    $this->sentimentsStorage->saveSentiment(
+      $values['id'],
+      $values['label'],
+      $values['min_label'],
+      $values['mid_label'],
+      $values['max_label'],
+      $max_weight + 1
+    );
 
-    $config->set('sentiments', $sentiments)->save();
-    $this->messenger()->addStatus($this->t('Added new sentiments %label.', ['%label' => $values['label']]));
+    $this->messenger()->addStatus($this->t('Added new sentiment %label.', ['%label' => $values['label']]));
     $form_state->setRedirectUrl(Url::fromRoute('analyze_ai_sentiments.settings'));
   }
 
