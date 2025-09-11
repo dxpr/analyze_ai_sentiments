@@ -1,4 +1,4 @@
-# AI Sentiments Analysis
+# AI Sentiments Analysis :)
 
 AI-powered multi-dimensional text analysis measuring trust, objectivity,
 audience targeting, and reading levels.
