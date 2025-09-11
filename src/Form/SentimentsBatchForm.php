@@ -24,7 +24,8 @@ final class SentimentsBatchForm extends FormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new static(
+    /** @var static */
+    return new self(
           $container->get('analyze_ai_sentiments.batch_service'),
       );
   }
