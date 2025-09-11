@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\analyze_ai_sentiments\Service;
 
+use Drupal\Core\Entity\RevisionableInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -87,7 +88,7 @@ final class SentimentsStorageService {
         $insert->values([
           'entity_type' => $entity->getEntityTypeId(),
           'entity_id' => $entity->id(),
-          'entity_revision_id' => method_exists($entity, 'getRevisionId') ? $entity->getRevisionId() : NULL,
+          'entity_revision_id' => $entity instanceof RevisionableInterface ? $entity->getRevisionId() : NULL,
           'langcode' => $entity->language()->getId(),
           'sentiments_id' => $sentiments_id,
           'score' => $score,
@@ -157,12 +158,11 @@ final class SentimentsStorageService {
    *   Array of sentiments_id => average_score pairs.
    */
   public function getAverageScores(): array {
-    $results = $this->database->select('analyze_ai_sentiments_results', 'r')
-      ->fields('r', ['sentiments_id'])
-      ->addExpression('AVG(score)', 'average_score')
-      ->groupBy('sentiments_id')
-      ->execute()
-      ->fetchAllKeyed();
+    $query = $this->database->select('analyze_ai_sentiments_results', 'r');
+    $query->fields('r', ['sentiments_id']);
+    $query->addExpression('AVG(score)', 'average_score');
+    $query->groupBy('sentiments_id');
+    $results = $query->execute()->fetchAllKeyed();
 
     return array_map('floatval', $results);
   }
@@ -216,9 +216,7 @@ final class SentimentsStorageService {
     $rendered = $this->renderer->render($view);
 
     // Convert to string and clean up.
-    $content = is_object($rendered) && method_exists($rendered, '__toString')
-        ? $rendered->__toString()
-        : (string) $rendered;
+    $content = (string) $rendered;
 
     // Strip HTML tags and normalize whitespace.
     $content = strip_tags($content);

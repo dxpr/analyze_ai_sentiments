@@ -33,7 +33,8 @@ class AddSentimentsForm extends FormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container): static {
-    return new static(
+    /** @var static */
+    return new self(
           $container->get('config.factory')
       );
   }
