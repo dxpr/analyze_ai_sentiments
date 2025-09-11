@@ -3,10 +3,8 @@
 namespace Drupal\analyze_ai_sentiments\Form;
 
 use Drupal\Core\Url;
-use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\analyze_ai_sentiments\Service\SentimentsStorageService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -14,7 +12,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 /**
  * Configure sentiments analysis settings.
  */
-class SentimentsSettingsForm extends ConfigFormBase {
+class SentimentsSettingsForm extends FormBase {
   /**
    * The sentiments storage service.
    */
@@ -28,22 +26,15 @@ class SentimentsSettingsForm extends ConfigFormBase {
   /**
    * Constructs a SentimentsSettingsForm object.
    *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The config factory.
-   * @param \Drupal\Core\Config\TypedConfigManagerInterface $typed_config_manager
-   *   The typed config manager.
    * @param \Drupal\analyze_ai_sentiments\Service\SentimentsStorageService $sentiments_storage
    *   The sentiments storage service.
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   The current user service.
    */
   public function __construct(
-    ConfigFactoryInterface $config_factory,
-    TypedConfigManagerInterface $typed_config_manager,
     SentimentsStorageService $sentiments_storage,
     AccountProxyInterface $current_user,
   ) {
-    parent::__construct($config_factory, $typed_config_manager);
     $this->sentimentstorage = $sentiments_storage;
     $this->currentUser = $current_user;
   }
@@ -54,8 +45,6 @@ class SentimentsSettingsForm extends ConfigFormBase {
   public static function create(ContainerInterface $container): static {
     /** @var static */
     return new self(
-          $container->get('config.factory'),
-          $container->get('config.typed'),
           $container->get('analyze_ai_sentiments.storage'),
           $container->get('current_user')
       );
@@ -66,14 +55,6 @@ class SentimentsSettingsForm extends ConfigFormBase {
    */
   public function getFormId() {
     return 'analyze_ai_sentiments_settings';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getEditableConfigNames(): array {
-    /** @var array<string> */
-    return ['analyze_ai_sentiments.settings'];
   }
 
   /**
