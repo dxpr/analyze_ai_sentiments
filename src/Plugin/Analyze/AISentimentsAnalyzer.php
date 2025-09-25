@@ -37,9 +37,9 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
   /**
    * The config factory.
    *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface|null
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected ?ConfigFactoryInterface $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * The messenger service.
@@ -99,7 +99,7 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
     $helper,
     $currentUser,
     AiProviderPluginManager $aiProvider,
-    ?ConfigFactoryInterface $config_factory,
+    ConfigFactoryInterface $config_factory,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected RendererInterface $renderer,
     protected LanguageManagerInterface $languageManager,
@@ -107,7 +107,7 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
     PromptJsonDecoderInterface $promptJsonDecoder,
     SentimentsStorageService $storage,
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $helper, $currentUser);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $helper, $currentUser, $config_factory);
     $this->aiProvider = $aiProvider;
     $this->configFactory = $config_factory;
     $this->messenger = $messenger;
