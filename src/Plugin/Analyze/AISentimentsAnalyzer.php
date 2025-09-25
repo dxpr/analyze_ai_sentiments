@@ -77,7 +77,7 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
    *   The current user.
    * @param \Drupal\ai\AiProviderPluginManager $aiProvider
    *   The AI provider manager.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   Config factory.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   Entity type manager.
@@ -99,7 +99,7 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
     $helper,
     $currentUser,
     AiProviderPluginManager $aiProvider,
-    ConfigFactoryInterface $config_factory,
+    ConfigFactoryInterface $configFactory,
     protected EntityTypeManagerInterface $entityTypeManager,
     protected RendererInterface $renderer,
     protected LanguageManagerInterface $languageManager,
@@ -107,9 +107,9 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
     PromptJsonDecoderInterface $promptJsonDecoder,
     SentimentsStorageService $storage,
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $helper, $currentUser, $config_factory);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $helper, $currentUser, $configFactory);
     $this->aiProvider = $aiProvider;
-    $this->configFactory = $config_factory;
+    $this->configFactory = $configFactory;
     $this->messenger = $messenger;
     $this->promptJsonDecoder = $promptJsonDecoder;
     $this->storage = $storage;
