@@ -775,7 +775,6 @@ display:
         type: normal
         title: 'AI Sentiments Analysis'
         description: 'View detailed sentiments scores and content analysis metrics for all analyzed entities.'
-        weight: -1
         expanded: true
         menu_name: admin
         parent: system.admin_reports
