@@ -71,10 +71,10 @@ function analyze_ai_sentiments_views_data() {
   $data['analyze_ai_sentiments_results']['langcode'] = [
     'title' => t('Language'),
     'help' => t('The language of the analyzed content.'),
-    'field' => ['id' => 'standard'],
-    'filter' => ['id' => 'string'],
+    'field' => ['id' => 'language'],
+    'filter' => ['id' => 'language'],
     'sort' => ['id' => 'standard'],
-    'argument' => ['id' => 'string'],
+    'argument' => ['id' => 'language'],
   ];
 
   // Sentiments ID field.
@@ -82,7 +82,10 @@ function analyze_ai_sentiments_views_data() {
     'title' => t('Sentiments Type'),
     'help' => t('The sentiments metric identifier (e.g., "positivity", "engagement").'),
     'field' => ['id' => 'standard'],
-    'filter' => ['id' => 'string'],
+    'filter' => [
+      'id' => 'analyze_select',
+      'options_callback' => 'analyze_ai_sentiments.storage:getSentimentOptions',
+    ],
     'sort' => ['id' => 'standard'],
     'argument' => ['id' => 'string'],
   ];

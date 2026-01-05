@@ -228,6 +228,21 @@ final class SentimentsStorageService {
   }
 
   /**
+   * Gets sentiment options for Views filter.
+   *
+   * @return array<string, string>
+   *   Array of sentiments_id => label pairs for use in select widgets.
+   */
+  public function getSentimentOptions(): array {
+    $sentiments = $this->getAllSentiments();
+    $options = [];
+    foreach ($sentiments as $sentiment_id => $sentiment_data) {
+      $options[$sentiment_id] = $sentiment_data['label'] ?? $sentiment_id;
+    }
+    return $options;
+  }
+
+  /**
    * Gets all configured sentiments.
    *
    * @return array<string, array<string, mixed>>
