@@ -63,43 +63,40 @@ final class SentimentsStorageService {
    *   Array of sentiments_id => score pairs.
    */
   public function saveScores(EntityInterface $entity, array $scores): void {
-    $content_hash = $this->generateContentHash($entity);
-    $config_hash = $this->generateConfigHash();
-
-    // Delete existing scores for this entity/language combination.
-    $this->database->delete('analyze_ai_sentiments_results')
-      ->condition('entity_type', $entity->getEntityTypeId())
-      ->condition('entity_id', $entity->id())
-      ->condition('langcode', $entity->language()->getId())
-      ->execute();
-
-    // Insert new scores.
-    if (!empty($scores)) {
-      $insert = $this->database->insert('analyze_ai_sentiments_results')
-        ->fields([
-          'entity_type', 'entity_id', 'entity_revision_id', 'langcode',
-          'sentiments_id', 'score', 'content_hash', 'config_hash', 'analyzed_timestamp',
-        ]);
-
-      foreach ($scores as $sentiments_id => $score) {
-        // Ensure score is within valid range.
-        $score = max(-1.0, min(1.0, (float) $score));
-
-        $insert->values([
-          'entity_type' => $entity->getEntityTypeId(),
-          'entity_id' => $entity->id(),
-          'entity_revision_id' => $entity instanceof RevisionableInterface ? $entity->getRevisionId() : NULL,
-          'langcode' => $entity->language()->getId(),
-          'sentiments_id' => $sentiments_id,
-          'score' => $score,
-          'content_hash' => $content_hash,
-          'config_hash' => $config_hash,
-          'analyzed_timestamp' => $this->time->getRequestTime(),
-        ]);
-      }
-
-      $insert->execute();
+    foreach ($scores as $sentiments_id => $score) {
+      $this->saveScore($entity, $sentiments_id, $score);
     }
+  }
+
+  /**
+   * Saves a single sentiment score for an entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity the score is for.
+   * @param string $sentiments_id
+   *   The sentiment ID.
+   * @param float $score
+   *   The sentiment score (-1.0 to +1.0).
+   */
+  public function saveScore(EntityInterface $entity, string $sentiments_id, float $score): void {
+    // Ensure score is within valid range.
+    $score = max(-1.0, min(1.0, $score));
+
+    $this->database->merge('analyze_ai_sentiments_results')
+      ->keys([
+        'entity_type' => $entity->getEntityTypeId(),
+        'entity_id' => $entity->id(),
+        'sentiments_id' => $sentiments_id,
+        'langcode' => $entity->language()->getId(),
+      ])
+      ->fields([
+        'entity_revision_id' => $entity instanceof RevisionableInterface ? $entity->getRevisionId() : 0,
+        'score' => $score,
+        'content_hash' => $this->generateContentHash($entity),
+        'config_hash' => $this->generateConfigHash(),
+        'analyzed_timestamp' => $this->time->getRequestTime(),
+      ])
+      ->execute();
   }
 
   /**
