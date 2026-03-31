@@ -1,56 +1,54 @@
 <p>This module is part of the <a href="https://www.drupal.org/project/ai">AI module</a> ecosystem and included in <a href="https://www.drupal.org/project/dxpr_cms">DXPR CMS</a>.</p>
 
-<h2>Comprehensive AI-Powered Content Analysis</h2>
+<h2>Your Content's Tone Says More Than You Think</h2>
 
-<blockquote>Gain deep insights into your content's effectiveness with multi-dimensional AI analysis covering trust, objectivity, audience targeting, and reading levels to optimize engagement and impact.</blockquote>
+<blockquote>Content that sounds too promotional loses trust. Content that's too academic loses readers. Content aimed at the wrong audience loses both. This module measures the dimensions that determine whether your content actually connects — trust, objectivity, audience fit, and reading level — so you can tune the tone before you publish.</blockquote>
 
 <h3>You need AI Sentiments Analysis if</h3>
 <ul>
-  <li>You want to optimize content tone and approach for different audiences</li>
-  <li>Your content needs to meet specific credibility or objectivity standards</li>
-  <li>You publish content for diverse audience segments with different reading levels</li>
-  <li>You need systematic analysis of content effectiveness across multiple dimensions</li>
+  <li>You publish for different audiences and need to verify the tone matches each segment</li>
+  <li>Your content sometimes reads as too promotional, too dry, or too complex — but feedback comes too late</li>
+  <li>You need to ensure content meets credibility or objectivity standards (journalism, academia, regulated industries)</li>
+  <li>You want a reading level check that goes beyond Flesch-Kincaid to actual CEFR language proficiency levels</li>
 </ul>
 
-<h2>Advanced Analysis Features</h2>
+<h2>What You Get</h2>
 <ul>
   <li>
-    <strong>Flexible Sentiments Configuration</strong>
-    <p>Add, remove, and reorder sentiments dimensions through an intuitive UI. Enable or disable specific analysis types per content type for targeted insights.</p>
-  </li>
-  <li>
-    <strong>Multi-Dimensional Content Evaluation</strong>
-    <p>Pre-configured sentiments dimensions provide comprehensive content assessment:</p>
+    <strong>Four analysis dimensions per page</strong>
+    <p>Each content entity is scored on a -1.0 to +1.0 scale across four dimensions, with meaningful labels at each end of the spectrum:</p>
     <ul>
-      <li><strong>Trust & Credibility</strong> - From Promotional to Authoritative</li>
-      <li><strong>Objectivity & Bias</strong> - From Opinion-Based to Fact-Based</li>
-      <li><strong>Audience Vibe Check</strong> - From Gen Z to Boomer targeting</li>
-      <li><strong>CEFR Reading Level</strong> - From A1 Beginner to C2 Proficient</li>
+      <li><strong>Trust & Credibility</strong> — Overly Promotional ↔ Authoritative</li>
+      <li><strong>Objectivity & Bias</strong> — Opinion-Based ↔ Fact-Based</li>
+      <li><strong>Audience Vibe Check</strong> — Gen Z ↔ Boomer targeting</li>
+      <li><strong>CEFR Reading Level</strong> — A1 Beginner ↔ C2 Proficient</li>
     </ul>
   </li>
   <li>
-    <strong>Intuitive Visual Feedback</strong>
-    <p>Visual gauge displays provide instant, easy-to-interpret analysis results for content creators.</p>
+    <strong>Fully customizable dimensions</strong>
+    <p>Add your own analysis dimensions, rename the labels, reorder by priority, or remove ones that don't apply to your content strategy.</p>
   </li>
   <li>
-    <strong>Unified Integration</strong>
-    <p>Seamless integration with the Analyze framework ensures consistent reporting across all analysis tools.</p>
+    <strong>Batch analysis for content audits</strong>
+    <p>Score your entire content library to identify tone inconsistencies, find content that's too complex for your audience, or flag pages that read as overly promotional.</p>
+  </li>
+  <li>
+    <strong>Site-wide sentiments report</strong>
+    <p>A filterable Views report shows sentiment scores across all content — spot patterns by content type, author, or date range.</p>
   </li>
 </ul>
 
-<h2>Quick Setup Guide</h2>
+<h2>Getting Started</h2>
 <ol>
-  <li>Configure AI provider settings at /admin/config/ai/providers</li>
-  <li>Configure and order sentiments at /admin/config/analyze/sentiments</li>
-  <li>Enable/disable the analyzer per content type at /admin/config/content/analyze-settings</li>
-  <li>Enable/disable specific sentiments per content type at /admin/structure/types/manage/{content-type}</li>
-  <li>Configure permissions at /admin/people/permissions#module-analyze_ai_sentiments</li>
-  <li>Access sentiments analysis through the Analyze tab on content</li>
+  <li>Set up an AI provider at /admin/config/ai/providers</li>
+  <li>Review and customize sentiment dimensions at /admin/config/analyze/sentiments</li>
+  <li>Enable the analyzer per content type at /admin/config/content/analyze-settings</li>
+  <li>Open any content entity's Analyze tab to see the scores</li>
 </ol>
 
 <div class="note-tip">
   <h4>Prefer a turnkey demo site?</h4>
-  <p>Spin up <strong>DXPR CMS</strong>—Drupal pre-configured with DXPR Builder, DXPR Theme, AI Sentiments Analysis module, and security best practices.</p>
+  <p>Spin up <strong>DXPR CMS</strong> — Drupal pre-configured with DXPR Builder, DXPR Theme, the full Analyze suite including AI Sentiments, and security best practices out of the box.</p>
   <p><a href="https://www.drupal.org/project/dxpr_cms" title="DXPR CMS platform">Get DXPR CMS »</a></p>
 </div>
 
@@ -58,8 +56,8 @@
 <p>
   This module requires:
   <ul>
-    <li><a href="https://www.drupal.org/project/analyze">Analyze</a> module</li>
-    <li><a href="https://www.drupal.org/project/ai">AI</a> module with a configured provider</li>
-    <li><a href="https://www.drupal.org/project/views_color_scales">Views Color Scales</a> module (provides colored tables for report page)</li>
+    <li><a href="https://www.drupal.org/project/analyze">Analyze</a> module (>=1.1.0)</li>
+    <li><a href="https://www.drupal.org/project/ai">AI</a> module with a configured chat provider</li>
+    <li><a href="https://www.drupal.org/project/views_color_scales">Views Color Scales</a> module</li>
   </ul>
 </p>
