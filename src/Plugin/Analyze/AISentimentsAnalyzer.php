@@ -2,6 +2,7 @@
 
 namespace Drupal\analyze_ai_sentiments\Plugin\Analyze;
 
+use Drupal\ai\Exception\AiRateLimitException;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\analyze\AnalyzePluginBase;
 use Drupal\analyze\BatchableAnalyzerInterface;
@@ -505,7 +506,7 @@ EOT;
 
       return $scores;
     }
-    catch (\Drupal\ai\Exception\AiRateLimitException $e) {
+    catch (AiRateLimitException $e) {
       throw $e;
     }
     catch (\Exception $e) {
@@ -532,6 +533,13 @@ EOT;
    */
   public function hasResults(EntityInterface $entity): bool {
     return !empty($this->storage->getScores($entity));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function countAnalyzedEntities(string $entity_type_id, string $bundle): int {
+    return $this->storage->countAnalyzedEntities($entity_type_id, $bundle);
   }
 
   /**
