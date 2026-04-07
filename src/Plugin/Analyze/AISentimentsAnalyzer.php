@@ -2,8 +2,10 @@
 
 namespace Drupal\analyze_ai_sentiments\Plugin\Analyze;
 
+use Drupal\ai\Exception\AiRateLimitException;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\analyze\AnalyzePluginBase;
+use Drupal\analyze\BatchableAnalyzerInterface;
 use Drupal\ai\AiProviderPluginManager;
 use Drupal\ai\OperationType\Chat\ChatInput;
 use Drupal\ai\OperationType\Chat\ChatMessage;
@@ -26,7 +28,7 @@ use Drupal\analyze_ai_sentiments\Service\SentimentsStorageService;
  *   description = @Translation("Analyzes the sentiments of content using AI.")
  * )
  */
-final class AISentimentsAnalyzer extends AnalyzePluginBase {
+final class AISentimentsAnalyzer extends AnalyzePluginBase implements BatchableAnalyzerInterface {
   /**
    * The AI provider manager.
    *
@@ -212,10 +214,10 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
       '#theme' => 'analyze_table',
       '#table_title' => 'Sentiments Analysis',
       '#rows' => [
-      [
-        'label' => 'Status',
-        'data' => $message,
-      ],
+        [
+          'label' => 'Status',
+          'data' => $message,
+        ],
       ],
     ];
   }
@@ -395,7 +397,7 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase {
 
     // Get the rendered entity view in default mode.
     $view = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId())->view($entity, 'default', $langcode);
-    $rendered = $this->renderer->render($view);
+    $rendered = $this->renderer->renderInIsolation($view);
 
     // Convert to string and strip HTML for sentiments analysis.
     $content = (string) $rendered;
@@ -504,9 +506,44 @@ EOT;
 
       return $scores;
     }
+    catch (AiRateLimitException $e) {
+      throw $e;
+    }
     catch (\Exception $e) {
       return [];
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function processEntity(EntityInterface $entity, bool $force_refresh = FALSE): bool {
+    if (!$force_refresh && $this->hasResults($entity)) {
+      return FALSE;
+    }
+    if ($force_refresh) {
+      $this->storage->deleteScores($entity);
+    }
+    $scores = $this->analyzeSentiments($entity);
+    if (!empty($scores)) {
+      $this->storage->saveScores($entity, $scores);
+      return TRUE;
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasResults(EntityInterface $entity): bool {
+    return !empty($this->storage->getScores($entity));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function countAnalyzedEntities(string $entity_type_id, string $bundle): int {
+    return $this->storage->countAnalyzedEntities($entity_type_id, $bundle);
   }
 
   /**

@@ -68,6 +68,46 @@ Results shown as gauges with:
 - Relevant min/mid/max labels for each dimension
 - Simple visual assessment for quick content evaluation
 
+## AI Coding Assistant Integration
+
+The Sentiments module includes a built-in
+[Agent Skills](https://agentskills.io) file (via the base
+Analyze module) that teaches AI coding assistants how to run
+sentiment analysis through natural language. Run
+`drush analyze:setup-ai` to enable, then ask naturally:
+
+```
+"Run sentiment analysis on all articles"
+"Check the trust and objectivity scores for the homepage"
+"Analyze reading level across all blog posts"
+"Run sentiment and brand voice analysis together"
+```
+
+Batch processing is available via the centralized Analyze
+batch system:
+
+```bash
+# Check analysis coverage
+drush analyze:batch --status
+
+# Run this analyzer on all enabled content types
+drush analyze:batch \
+  --analyzers=analyze_ai_sentiments_analyzer
+
+# Run on specific content types with limit
+drush analyze:batch \
+  --analyzers=analyze_ai_sentiments_analyzer \
+  --types=node:article --limit=50
+
+# Force re-analysis of already analyzed content
+drush analyze:batch \
+  --analyzers=analyze_ai_sentiments_analyzer --force
+```
+
+Compatible with Claude Code, Codex CLI, Gemini CLI, GitHub
+Copilot, Cursor, and other tools supporting the
+[Agent Skills standard](https://agentskills.io/specification).
+
 ## Development
 
 ### Docker Commands
