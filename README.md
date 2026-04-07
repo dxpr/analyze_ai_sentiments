@@ -68,17 +68,25 @@ Results shown as gauges with:
 - Relevant min/mid/max labels for each dimension
 - Simple visual assessment for quick content evaluation
 
-## Batch Processing
+## CLI & AI Agent Support
 
-Batch analysis is available through the centralized Analyze batch system:
+### Batch Processing
 
-- **Admin UI**: Navigate to Administration > Configuration > Content > Batch
-  Analysis (`/admin/config/content/analyze-batch`), select "AI Sentiments
-  Analysis" and your desired content types.
-- **Drush CLI**: `drush analyze:batch --analyzers=analyze_ai_sentiments_analyzer`
+Batch analysis is available through the centralized Analyze
+batch system:
 
-See the [Analyze module documentation](https://www.drupal.org/project/analyze)
-for full batch command options including `--types`, `--limit`, and `--force`.
+- **Admin UI**: Administration > Configuration > Content >
+  Batch Analysis (`/admin/config/content/analyze-batch`)
+- **Drush CLI**:
+  `drush analyze:batch --analyzers=analyze_ai_sentiments_analyzer`
+
+See the [Analyze module](https://www.drupal.org/project/analyze)
+for full batch command options.
+
+### AI Agent Integration
+
+AI agents can access sentiment analysis through the centralized
+Analyze skill files. Install with `drush analyze:setup-ai`.
 
 ## Development
 
