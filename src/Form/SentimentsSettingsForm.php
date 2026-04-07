@@ -109,11 +109,11 @@ class SentimentsSettingsForm extends FormBase {
         $this->t('Operations'),
       ],
       '#tabledrag' => [
-      [
-        'action' => 'order',
-        'relationship' => 'sibling',
-        'group' => 'sentiments-weight',
-      ],
+        [
+          'action' => 'order',
+          'relationship' => 'sibling',
+          'group' => 'sentiments-weight',
+        ],
       ],
     ];
 

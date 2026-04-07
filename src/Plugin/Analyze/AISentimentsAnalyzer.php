@@ -213,10 +213,10 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase implements BatchableA
       '#theme' => 'analyze_table',
       '#table_title' => 'Sentiments Analysis',
       '#rows' => [
-      [
-        'label' => 'Status',
-        'data' => $message,
-      ],
+        [
+          'label' => 'Status',
+          'data' => $message,
+        ],
       ],
     ];
   }
