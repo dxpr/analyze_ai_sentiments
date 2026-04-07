@@ -524,8 +524,12 @@ EOT;
     if ($force_refresh) {
       $this->storage->deleteScores($entity);
     }
-    $this->renderSummary($entity);
-    return TRUE;
+    $scores = $this->analyzeSentiments($entity);
+    if (!empty($scores)) {
+      $this->storage->saveScores($entity, $scores);
+      return TRUE;
+    }
+    return FALSE;
   }
 
   /**

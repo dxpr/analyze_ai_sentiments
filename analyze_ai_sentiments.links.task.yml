@@ -2,9 +2,3 @@ analyze_ai_sentiments.settings:
   route_name: analyze_ai_sentiments.settings
   title: 'Settings'
   base_route: analyze_ai_sentiments.settings
-
-analyze_ai_sentiments.batch:
-  route_name: analyze_ai_sentiments.batch
-  title: 'Batch Analysis'
-  base_route: analyze_ai_sentiments.settings
-  weight: 10
