@@ -68,25 +68,35 @@ Results shown as gauges with:
 - Relevant min/mid/max labels for each dimension
 - Simple visual assessment for quick content evaluation
 
-## CLI & AI Agent Support
+## AI Coding Assistant Integration
 
-### Batch Processing
+The Sentiments module includes a built-in
+[Agent Skills](https://agentskills.io) file (via the base
+Analyze module) that teaches AI coding assistants how to run
+sentiment analysis through natural language. Run
+`drush analyze:setup-ai` to enable, then ask naturally:
 
-Batch analysis is available through the centralized Analyze
+```
+"Run sentiment analysis on all articles"
+"Check the trust and objectivity scores for the homepage"
+"Analyze reading level across all blog posts"
+"Run sentiment and brand voice analysis together"
+```
+
+Batch processing is available via the centralized Analyze
 batch system:
 
-- **Admin UI**: Administration > Configuration > Content >
-  Batch Analysis (`/admin/config/content/analyze-batch`)
-- **Drush CLI**:
-  `drush analyze:batch --analyzers=analyze_ai_sentiments_analyzer`
+```bash
+drush analyze:batch \
+  --analyzers=analyze_ai_sentiments_analyzer
+drush analyze:batch \
+  --analyzers=analyze_ai_sentiments_analyzer \
+  --types=node:article --force
+```
 
-See the [Analyze module](https://www.drupal.org/project/analyze)
-for full batch command options.
-
-### AI Agent Integration
-
-AI agents can access sentiment analysis through the centralized
-Analyze skill files. Install with `drush analyze:setup-ai`.
+Compatible with Claude Code, Codex CLI, Gemini CLI, GitHub
+Copilot, Cursor, and other tools supporting the
+[Agent Skills standard](https://agentskills.io/specification).
 
 ## Development
 
