@@ -87,11 +87,21 @@ Batch processing is available via the centralized Analyze
 batch system:
 
 ```bash
+# Check analysis coverage
+drush analyze:batch --status
+
+# Run this analyzer on all enabled content types
 drush analyze:batch \
   --analyzers=analyze_ai_sentiments_analyzer
+
+# Run on specific content types with limit
 drush analyze:batch \
   --analyzers=analyze_ai_sentiments_analyzer \
-  --types=node:article --force
+  --types=node:article --limit=50
+
+# Force re-analysis of already analyzed content
+drush analyze:batch \
+  --analyzers=analyze_ai_sentiments_analyzer --force
 ```
 
 Compatible with Claude Code, Codex CLI, Gemini CLI, GitHub
