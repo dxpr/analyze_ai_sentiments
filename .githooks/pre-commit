@@ -68,3 +68,21 @@ echo "✅ All Drupal code quality checks passed!"
 echo "🚀 Proceeding with commit..."
 
 exit 0
+# Em dash lint check
+EMDASH_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(html|md|txt|php|module|install|inc|yml|yaml|twig|js|css)$' || true)
+if [ -n "$EMDASH_FILES" ]; then
+  EMDASH_FOUND=""
+  for f in $EMDASH_FILES; do
+    if git show ":$f" 2>/dev/null | grep -qP '—' 2>/dev/null || git show ":$f" 2>/dev/null | grep -q '—' 2>/dev/null; then
+      EMDASH_FOUND="${EMDASH_FOUND}  ${f}
+"
+    fi
+  done
+  if [ -n "$EMDASH_FOUND" ]; then
+    echo ""
+    echo "Error: Em dashes found in staged files:"
+    printf "$EMDASH_FOUND"
+    echo "Replace with ' -- ' or rephrase."
+    exit 1
+  fi
+fi
