@@ -1,4 +1,8 @@
-# AI Sentiments Analysis
+> Part of [DXPR CMS](https://dxpr.com/c/marketing-cms): The AI-Powered Drupal CMS
+>
+> [Documentation](https://dxpr.com/docs) | [Try Free](https://dxpr.com/try) | [dxpr.com](https://dxpr.com)
+
+# AI Sentiments Analysis: Multi-Dimensional Trust, Tone, and Readability Scoring for Drupal
 
 AI-powered multi-dimensional text analysis measuring trust, objectivity,
 audience targeting, and reading levels.
@@ -132,3 +136,9 @@ To bypass in emergencies:
 ```bash
 git commit --no-verify -m "emergency commit"
 ```
+
+## Related DXPR Modules
+
+- [Analyze](https://www.drupal.org/project/analyze)
+- [AI Brand Voice Analysis](https://www.drupal.org/project/analyze_ai_brand_voice)
+- [AI Content Strategy](https://www.drupal.org/project/ai_content_strategy)
