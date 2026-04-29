@@ -1,4 +1,11 @@
-# AI Sentiments Analysis
+> **Analyze AI Sentiments** is a Drupal module by [DXPR](https://dxpr.com) that
+> measures tone, objectivity, reading level, and audience fit across your Drupal content using AI. An [Analyze](https://www.drupal.org/project/analyze) plugin built by [DXPR](https://dxpr.com).
+>
+> [Getting Started](https://dxpr.com/c/getting-started) |
+> [Pricing](https://dxpr.com/pricing) |
+> [Try Free Demo](https://dxpr.com/try)
+
+# AI Sentiments Analysis: Multi-Dimensional Trust, Tone, and Readability Scoring for Drupal
 
 AI-powered multi-dimensional text analysis measuring trust, objectivity,
 audience targeting, and reading levels.
@@ -132,3 +139,12 @@ To bypass in emergencies:
 ```bash
 git commit --no-verify -m "emergency commit"
 ```
+
+## Related Modules
+
+- [Analyze](https://www.drupal.org/project/analyze) - Required. Provides the plugin framework, Analyze tab, and batch processing this module extends
+- [AI](https://www.drupal.org/project/ai) - Required. Supplies the LLM provider used for scoring sentiment dimensions
+- [Views Color Scales](https://www.drupal.org/project/views_color_scales) - Required. Renders color-coded sentiment score columns in the Views report
+- [AI Content Marketing Audit](https://www.drupal.org/project/analyze_ai_content_marketing_audit) - Sibling Analyze plugin that scores marketing effectiveness
+- [AI Content Security Audit](https://www.drupal.org/project/analyze_ai_content_security_audit) - Sibling Analyze plugin that detects PII and credential leaks
+- [Analyze Broken Links](https://www.drupal.org/project/analyze_broken_links) - Sibling Analyze plugin that checks link health without AI
