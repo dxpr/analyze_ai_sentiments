@@ -1,6 +1,9 @@
-> Part of [DXPR CMS](https://dxpr.com/c/marketing-cms): The AI-Powered Drupal CMS
+> **Analyze AI Sentiments** is a Drupal module by [DXPR](https://dxpr.com) that
+> measures tone, objectivity, reading level, and audience fit across your Drupal content using AI. An [Analyze](https://www.drupal.org/project/analyze) plugin built by [DXPR](https://dxpr.com).
 >
-> [Documentation](https://dxpr.com/docs) | [Try Free](https://dxpr.com/try) | [dxpr.com](https://dxpr.com)
+> [Getting Started](https://dxpr.com/c/getting-started) |
+> [Pricing](https://dxpr.com/pricing) |
+> [Try Free Demo](https://dxpr.com/try)
 
 # AI Sentiments Analysis: Multi-Dimensional Trust, Tone, and Readability Scoring for Drupal
 
@@ -137,8 +140,10 @@ To bypass in emergencies:
 git commit --no-verify -m "emergency commit"
 ```
 
-## Related DXPR Modules
+## Related Modules
 
 - [Analyze](https://www.drupal.org/project/analyze)
 - [AI Brand Voice Analysis](https://www.drupal.org/project/analyze_ai_brand_voice)
 - [AI Content Strategy](https://www.drupal.org/project/ai_content_strategy)
+- [AI](https://www.drupal.org/project/ai) - Artificial Intelligence integration for Drupal
+- [Metatag](https://www.drupal.org/project/metatag) - Meta tags management for Drupal
