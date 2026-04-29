@@ -142,8 +142,9 @@ git commit --no-verify -m "emergency commit"
 
 ## Related Modules
 
-- [Analyze](https://www.drupal.org/project/analyze)
-- [AI Brand Voice Analysis](https://www.drupal.org/project/analyze_ai_brand_voice)
-- [AI Content Strategy](https://www.drupal.org/project/ai_content_strategy)
-- [AI](https://www.drupal.org/project/ai) - Artificial Intelligence integration for Drupal
-- [Metatag](https://www.drupal.org/project/metatag) - Meta tags management for Drupal
+- [Analyze](https://www.drupal.org/project/analyze) - Required. Provides the plugin framework, Analyze tab, and batch processing this module extends
+- [AI](https://www.drupal.org/project/ai) - Required. Supplies the LLM provider used for scoring sentiment dimensions
+- [Views Color Scales](https://www.drupal.org/project/views_color_scales) - Required. Renders color-coded sentiment score columns in the Views report
+- [AI Content Marketing Audit](https://www.drupal.org/project/analyze_ai_content_marketing_audit) - Sibling Analyze plugin that scores marketing effectiveness
+- [AI Content Security Audit](https://www.drupal.org/project/analyze_ai_content_security_audit) - Sibling Analyze plugin that detects PII and credential leaks
+- [Analyze Broken Links](https://www.drupal.org/project/analyze_broken_links) - Sibling Analyze plugin that checks link health without AI
