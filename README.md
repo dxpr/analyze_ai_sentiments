@@ -1,9 +1,9 @@
 > **Analyze AI Sentiments** is a Drupal module by [DXPR](https://dxpr.com) that
 > measures tone, objectivity, reading level, and audience fit across your Drupal content using AI. An [Analyze](https://www.drupal.org/project/analyze) plugin built by [DXPR](https://dxpr.com).
 >
-> [Getting Started](https://dxpr.com/c/getting-started) |
+> [Getting Started](https://dxpr.com/c/marketing-cms) |
 > [Pricing](https://dxpr.com/pricing) |
-> [Try Free Demo](https://dxpr.com/try)
+> [Try Free Demo](https://try.dxpr.com)
 
 # AI Sentiments Analysis: Multi-Dimensional Trust, Tone, and Readability Scoring for Drupal
 
