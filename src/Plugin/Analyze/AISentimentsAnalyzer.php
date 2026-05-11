@@ -549,6 +549,13 @@ EOT;
   /**
    * {@inheritdoc}
    */
+  public function getAnalyzedEntityIds(string $entity_type_id, string $bundle): array {
+    return $this->storage->getAnalyzedEntityIds($entity_type_id, $bundle);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSettings(string $entity_type_id, ?string $bundle = NULL): array {
     return $this->getEntityTypeSettings($entity_type_id, $bundle);
   }
