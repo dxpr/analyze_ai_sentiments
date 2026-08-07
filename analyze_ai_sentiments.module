@@ -11,6 +11,37 @@ use Drupal\Core\Url;
 use Drupal\views\ViewExecutable;
 
 /**
+ * Implements hook_views_color_scale_popover_alter().
+ */
+function analyze_ai_sentiments_views_color_scale_popover_alter(array &$content, array $context): void {
+  if ($context['view']->storage->get('base_table') !== 'analyze_ai_sentiments_results') {
+    return;
+  }
+  $sentiments_id = $context['row']->analyze_ai_sentiments_results_sentiments_id ?? NULL;
+  if (!$sentiments_id) {
+    return;
+  }
+  $sentiment = \Drupal::service('analyze_ai_sentiments.storage')->getSentiment($sentiments_id);
+  if (!$sentiment) {
+    return;
+  }
+  $content = [
+    '#theme' => 'analyze_gauge',
+    '#caption' => $context['field_options']['label'] ?? '',
+    '#range_min_label' => $sentiment['min_label'],
+    '#range_mid_label' => $sentiment['mid_label'],
+    '#range_max_label' => $sentiment['max_label'],
+    '#range_min' => $context['min'],
+    '#value' => $context['position'],
+    '#display_value' => $context['display_value'],
+    '#range_max' => $context['max'],
+    '#attached' => [
+      'library' => ['analyze/gauge-popover'],
+    ],
+  ];
+}
+
+/**
  * Implements hook_entity_update().
  */
 function analyze_ai_sentiments_entity_update(EntityInterface $entity) {
