@@ -87,7 +87,7 @@ function analyze_ai_sentiments_views_pre_view(ViewExecutable $view, $display_id,
   if ($view->id() === 'ai_sentiments_analysis_results' && $display_id === 'page_1') {
     // Build the settings link if user has permission.
     $current_user = \Drupal::currentUser();
-    if ($current_user->hasPermission('administer analyze settings')) {
+    if ($current_user->hasPermission('administer analyze')) {
       $settings_url = Url::fromRoute('analyze_ai_sentiments.settings');
       if ($settings_url->access()) {
         $link = Link::fromTextAndUrl(t('Configure settings'), $settings_url);
