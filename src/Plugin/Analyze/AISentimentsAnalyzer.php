@@ -408,7 +408,7 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase implements BatchableA
     // Replace multiple whitespace characters (spaces, tabs, newlines)
     // with a single space.
     $content = preg_replace('/\s+/', ' ', $content);
-    $content = trim($content);
+    $content = trim($content, " \n\r\t\v\x00");
 
     return $content;
   }

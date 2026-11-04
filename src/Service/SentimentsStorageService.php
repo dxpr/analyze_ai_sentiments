@@ -219,7 +219,7 @@ final class SentimentsStorageService {
     $content = strip_tags($content);
     $content = str_replace('&nbsp;', ' ', $content);
     $content = preg_replace('/\s+/', ' ', $content);
-    $content = trim($content);
+    $content = trim($content, " \n\r\t\v\x00");
 
     return $content;
   }
