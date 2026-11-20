@@ -2,6 +2,9 @@
 
 namespace Drupal\analyze_ai_sentiments\Hook;
 
+use Drupal\analyze_ai_sentiments\Service\SentimentsStorageService;
+use Drupal\Core\Session\AccountProxyInterface;
+
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\views\ViewExecutable;
@@ -16,6 +19,14 @@ class AnalyzeAiSentimentsHooks {
   use StringTranslationTrait;
 
   /**
+   * Constructs the hook service.
+   */
+  public function __construct(
+    protected SentimentsStorageService $analyzeAiSentimentsStorage,
+    protected AccountProxyInterface $currentUser,
+  ) {}
+
+  /**
    * Implements hook_views_color_scale_popover_alter().
    */
   #[Hook('views_color_scale_popover_alter')]
@@ -27,7 +38,7 @@ class AnalyzeAiSentimentsHooks {
     if (!$sentiments_id) {
       return;
     }
-    $sentiment = \Drupal::service('analyze_ai_sentiments.storage')->getSentiment($sentiments_id);
+    $sentiment = $this->analyzeAiSentimentsStorage->getSentiment($sentiments_id);
     if (!$sentiment) {
       return;
     }
@@ -55,7 +66,7 @@ class AnalyzeAiSentimentsHooks {
   #[Hook('entity_update')]
   public function entityUpdate(EntityInterface $entity) {
     if (_analyze_ai_sentiments_is_supported_entity($entity)) {
-      \Drupal::service('analyze_ai_sentiments.storage')->deleteScores($entity);
+      $this->analyzeAiSentimentsStorage->deleteScores($entity);
     }
   }
 
@@ -65,7 +76,7 @@ class AnalyzeAiSentimentsHooks {
   #[Hook('entity_delete')]
   public function entityDelete(EntityInterface $entity) {
     if (_analyze_ai_sentiments_is_supported_entity($entity)) {
-      \Drupal::service('analyze_ai_sentiments.storage')->deleteScores($entity);
+      $this->analyzeAiSentimentsStorage->deleteScores($entity);
     }
   }
 
@@ -77,7 +88,7 @@ class AnalyzeAiSentimentsHooks {
     // Add settings link to the sentiments analysis view header.
     if ($view->id() === 'ai_sentiments_analysis_results' && $display_id === 'page_1') {
       // Build the settings link if user has permission.
-      $current_user = \Drupal::currentUser();
+      $current_user = $this->currentUser;
       if ($current_user->hasPermission('administer analyze')) {
         $settings_url = Url::fromRoute('analyze_ai_sentiments.settings');
         if ($settings_url->access()) {

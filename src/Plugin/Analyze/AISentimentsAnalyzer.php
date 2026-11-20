@@ -2,6 +2,7 @@
 
 namespace Drupal\analyze_ai_sentiments\Plugin\Analyze;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\ai\Exception\AiRateLimitException;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\analyze\AnalyzePluginBase;
@@ -28,6 +29,11 @@ use Drupal\analyze_ai_sentiments\Service\SentimentsStorageService;
  *   description = @Translation("Analyzes the sentiments of content using AI.")
  * )
  */
+#[\Drupal\analyze\Attribute\Analyze(
+  id: "analyze_ai_sentiments_analyzer",
+  label: new TranslatableMarkup("Sentiments Analysis"),
+  description: new TranslatableMarkup("Analyzes the sentiments of content using AI."),
+)]
 final class AISentimentsAnalyzer extends AnalyzePluginBase implements BatchableAnalyzerInterface {
   /**
    * The AI provider manager.
@@ -408,7 +414,7 @@ final class AISentimentsAnalyzer extends AnalyzePluginBase implements BatchableA
     // Replace multiple whitespace characters (spaces, tabs, newlines)
     // with a single space.
     $content = preg_replace('/\s+/', ' ', $content);
-    $content = trim($content);
+    $content = trim($content, " \n\r\t\v\0");
 
     return $content;
   }

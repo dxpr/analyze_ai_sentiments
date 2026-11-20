@@ -6,6 +6,9 @@ services:
   Drupal\analyze_ai_sentiments\Hook\AnalyzeAiSentimentsHooks:
     class: Drupal\analyze_ai_sentiments\Hook\AnalyzeAiSentimentsHooks
     autowire: true
+    arguments:
+      - '@analyze_ai_sentiments.storage'
+      - '@current_user'
 
   Drupal\analyze_ai_sentiments\Hook\AnalyzeAiSentimentsViewsHooks:
     class: Drupal\analyze_ai_sentiments\Hook\AnalyzeAiSentimentsViewsHooks
