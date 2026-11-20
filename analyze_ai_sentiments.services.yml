@@ -2,3 +2,11 @@ services:
   analyze_ai_sentiments.storage:
     class: Drupal\analyze_ai_sentiments\Service\SentimentsStorageService
     arguments: ['@database', '@config.factory', '@entity_type.manager', '@renderer', '@datetime.time']
+
+  Drupal\analyze_ai_sentiments\Hook\AnalyzeAiSentimentsHooks:
+    class: Drupal\analyze_ai_sentiments\Hook\AnalyzeAiSentimentsHooks
+    autowire: true
+
+  Drupal\analyze_ai_sentiments\Hook\AnalyzeAiSentimentsViewsHooks:
+    class: Drupal\analyze_ai_sentiments\Hook\AnalyzeAiSentimentsViewsHooks
+    autowire: true
